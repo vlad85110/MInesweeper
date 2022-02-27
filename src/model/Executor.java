@@ -1,17 +1,49 @@
 package model;
 
-import view.console.Printer;
+import controller.Controller;
+import controller.commands.Command;
+import controller.commands.Open;
+import model.data.Field;
+import view.Viewer;
 
-public class Executor {
-    private final Field field;
+import java.io.IOException;
 
-    public Executor(int size, int mines) {
-        field = new Field(size);
-        GameStarter starter = new GameStarter(size, mines, field);
-        starter.initField();
-    }
+public record Executor(Controller controller, Field field, GameStarter starter, Viewer viewer) {
 
-    public void execute() {
-        Printer.print(field.getUserView(), field.getSize());
+    public void run() {
+        boolean notLose = false;
+        Command cmd;
+
+        while (!field.isStart()) {
+            viewer.getUpdate(field.getUserView());
+            cmd = controller.waitCommand();
+            if (cmd instanceof Open) {
+                starter.initField(cmd.getPoint());
+                field.setStart();
+            }
+            try {
+                notLose = cmd.run();
+            } catch (IOException e) {
+                viewer.showWarningMessage("incorrect point");
+                notLose = true;
+            }
+        }
+
+        while (notLose && !field.isWin()) {
+            viewer.getUpdate(field.getUserView());
+            cmd = controller.waitCommand();
+            try {
+                notLose = cmd.run();
+            } catch (IOException e) {
+                viewer.showWarningMessage("incorrect point");
+            }
+        }
+
+        if (field().isWin()) {
+            viewer.showWinMessage();
+        } else {
+            viewer.getUpdate(field.getLoseMap());
+            viewer.showLoseMessage();
+        }
     }
 }
