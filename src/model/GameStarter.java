@@ -2,9 +2,9 @@ package model;
 
 import java.util.Random;
 
-public record GameStarter(int size, int mines, Field field) {
+public record GameStarter(int size, int mines, Field field, int safetyRad) {
 
-    public void initField() {
+    public void initField(Point start) {
         final Random random = new Random();
         int x, y;
 
@@ -14,9 +14,9 @@ public record GameStarter(int size, int mines, Field field) {
                 x = random.nextInt(size - 1);
                 y = random.nextInt(size - 1);
                 point = new Point(x, y);
-            } while (field.isMine(point));
+            } while (field.isMine(point) || point.inSquare(start, safetyRad));
 
-            field.setMine(point, 'b');
+            field.setBomb(point);
             fillNeighbours(point);
         }
     }

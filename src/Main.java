@@ -1,7 +1,5 @@
 import model.Executor;
-import model.Field;
-import model.GameStarter;
-import view.console.Printer;
+import model.Point;
 
 public class Main {
 
