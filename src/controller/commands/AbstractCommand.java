@@ -1,7 +1,7 @@
-package controller;
+package controller.commands;
 
-import model.Field;
-import model.Point;
+import model.data.Field;
+import model.data.Point;
 
 public abstract class AbstractCommand implements Command {
     protected CommandDescriptor descriptor;

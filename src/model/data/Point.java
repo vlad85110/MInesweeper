@@ -1,4 +1,4 @@
-package model;
+package model.data;
 
 import static java.lang.Integer.signum;
 import static java.lang.Math.abs;
@@ -12,8 +12,8 @@ public class Point {
         this.y = y;
     }
 
-    public Point plus(int argx, int argy) {
-        return new Point(x + argx, y + argy);
+    public Point plus(int argX, int argY) {
+        return new Point(x + argX, y + argY);
     }
 
     public Point plusPoint(Point point) {

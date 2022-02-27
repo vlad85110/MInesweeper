@@ -1,4 +1,4 @@
-package model;
+package model.data;
 
 public class Field {
     private final int size;
@@ -9,12 +9,14 @@ public class Field {
     private final Character [][] userView;
     private final boolean [][] openCells;
 
-    public Field(int size, int bombs) {
-        this.size = size;
-        this.bombs = bombs;
+    public Field(GameDescriptor descriptor) {
+        size = descriptor.size();
+        bombs = descriptor.bombs();
+
         bombMap = new Character[size][size];
         userView = new Character[size][size];
         openCells = new boolean[size][size];
+
         start = false;
         opened = 0;
 
@@ -62,6 +64,17 @@ public class Field {
 
     public Character[][] getBombMap() {
         return bombMap;
+    }
+
+    public Character[][] getLoseMap() {
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                if (bombMap[i][j] == 'b') {
+                    userView[i][j] = 'b';
+                }
+            }
+        }
+        return userView;
     }
 
     public Character[][] getUserView() {

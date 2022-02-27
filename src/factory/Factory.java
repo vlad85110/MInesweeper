@@ -1,7 +1,5 @@
 package factory;
 
-import controller.Command;
-
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -24,7 +22,7 @@ public abstract class Factory {
 
     protected abstract String getFileName();
 
-    public abstract Command createObject(Object desc) throws ClassNotFoundException, InvocationTargetException,
+    public abstract Object createObject(Object desc) throws ClassNotFoundException, InvocationTargetException,
             InstantiationException, IllegalAccessException, NoSuchMethodException;
 
 }

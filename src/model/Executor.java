@@ -1,46 +1,49 @@
 package model;
 
-import controller.Command;
 import controller.Controller;
-import controller.Open;
-import view.console.Printer;
+import controller.commands.Command;
+import controller.commands.Open;
+import model.data.Field;
+import view.Viewer;
 
-public class Executor {
-    private final Field field;
-    private final int bombs;
-    private final int size;
+import java.io.IOException;
 
-    public Executor(int size, int bombs) {
-        field = new Field(size, bombs);
-        this.bombs = bombs;
-        this.size = size;
-    }
+public record Executor(Controller controller, Field field, GameStarter starter, Viewer viewer) {
 
-    public void execute() {
-        //TODO maybe
-        var starter = new GameStarter(size, bombs, field, 2);
-        var updater = new Printer();
-        var controller = new Controller(field);
-        boolean check = false;
+    public void run() {
+        boolean notLose = false;
         Command cmd;
 
         while (!field.isStart()) {
-            updater.getUpdate(field.getUserView());
+            viewer.getUpdate(field.getUserView());
             cmd = controller.waitCommand();
             if (cmd instanceof Open) {
                 starter.initField(cmd.getPoint());
                 field.setStart();
             }
-            check = cmd.run();
+            try {
+                notLose = cmd.run();
+            } catch (IOException e) {
+                viewer.showWarningMessage("incorrect point");
+                notLose = true;
+            }
         }
 
-        if (!check) System.out.println("lose");
-
-        while (check || !field.isWin()) {
-            updater.getUpdate(field.getUserView());
+        while (notLose && !field.isWin()) {
+            viewer.getUpdate(field.getUserView());
             cmd = controller.waitCommand();
-            check = cmd.run();
-            updater.getUpdate(field.getUserView());
+            try {
+                notLose = cmd.run();
+            } catch (IOException e) {
+                viewer.showWarningMessage("incorrect point");
+            }
+        }
+
+        if (field().isWin()) {
+            viewer.showWinMessage();
+        } else {
+            viewer.getUpdate(field.getLoseMap());
+            viewer.showLoseMessage();
         }
     }
 }

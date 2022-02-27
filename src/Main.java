@@ -1,10 +1,9 @@
-import model.Executor;
-import model.Point;
+import model.GameManager;
 
 public class Main {
 
     public static void main(String[] args) {
-        Executor executor = new Executor(9, 10);
-        executor.execute();
+        GameManager manager = new GameManager();
+        manager.start();
     }
 }

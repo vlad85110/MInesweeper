@@ -1,14 +1,30 @@
 package model;
 
+import model.data.Field;
+import model.data.GameDescriptor;
+import model.data.Point;
+
 import java.util.Random;
 
-public record GameStarter(int size, int mines, Field field, int safetyRad) {
+public class GameStarter {
+    private final Field field;
+    private final int size;
+    private final int bombs;
+    private final int safetyRad;
+
+    public GameStarter(GameDescriptor descriptor, Field field) {
+        //TODO чтоб в углах тоже был большой квадрат
+        this.field = field;
+        size = descriptor.size();
+        bombs = descriptor.bombs();
+        safetyRad = descriptor.safetyRad();
+    }
 
     public void initField(Point start) {
         final Random random = new Random();
         int x, y;
 
-        for (int i = 0; i < mines; i++) {
+        for (int i = 0; i < bombs; i++) {
             Point point;
             do {
                 x = random.nextInt(size - 1);

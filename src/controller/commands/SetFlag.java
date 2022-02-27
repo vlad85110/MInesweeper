@@ -1,6 +1,7 @@
-package controller;
+package controller.commands;
 
-import model.Point;
+import controller.commands.AbstractCommand;
+import controller.commands.CommandDescriptor;
 
 public class SetFlag extends AbstractCommand {
     public SetFlag(CommandDescriptor descriptor) {

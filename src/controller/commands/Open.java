@@ -1,7 +1,10 @@
-package controller;
+package controller.commands;
 
-import model.Point;
+import controller.commands.AbstractCommand;
+import controller.commands.CommandDescriptor;
+import model.data.Point;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,7 +13,7 @@ public class Open extends AbstractCommand {
         super(descriptor);
     }
 
-    private static final Map<String, Point> vectors = new HashMap<>(){
+    private static final Map<String, Point> vectors = new HashMap<>() {
         {
          put("up", new Point(0, -1));
          put("down", new Point(0, 1));
@@ -26,7 +29,7 @@ public class Open extends AbstractCommand {
 
 
     @Override
-    public boolean run() {
+    public boolean run() throws IOException {
         var point = descriptor.arg();
         var field = descriptor.field();
         if (field.isMine(point)) return false;
@@ -35,9 +38,9 @@ public class Open extends AbstractCommand {
         return true;
     }
 
-    public void openMain(Point point) {
+    public void openMain(Point point) throws IOException {
         if (field.outOf(point)) {
-            throw new ArrayIndexOutOfBoundsException(" ");
+            throw new IOException();
         }
         if (field.isNearMine(point)) {
             field.openSell(point);
