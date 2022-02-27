@@ -13,7 +13,7 @@ public class GameStarter {
     private final int safetyRad;
 
     public GameStarter(GameDescriptor descriptor, Field field) {
-        //TODO чтоб в углах тоже был большой квадрат
+        //TODO generation
         this.field = field;
         size = descriptor.size();
         bombs = descriptor.bombs();
