@@ -1,10 +1,9 @@
 package controller.console;
 
-import controller.Controller;
+import controller.AbstractController;
 import controller.commands.Command;
 import controller.commands.CommandDescriptor;
 import factory.CommandFactory;
-import model.data.Field;
 import model.data.Point;
 
 import java.io.IOException;
@@ -12,11 +11,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Scanner;
 
-public class ConsoleController implements Controller {
-    //TODO abstract controller
+public class ConsoleController extends AbstractController {
     private final Scanner scanner;
-    private CommandFactory factory;
-    private Field field;
+
 
     private static final HashMap<String, String> difficulties = new HashMap<>() {
        {
@@ -34,11 +31,6 @@ public class ConsoleController implements Controller {
             e.printStackTrace();
         }
         scanner = new Scanner(System.in);
-    }
-
-    @Override
-    public void setField(Field field) {
-        this.field = field;
     }
 
     @Override

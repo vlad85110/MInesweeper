@@ -58,14 +58,6 @@ public class Field {
         } catch (ArrayIndexOutOfBoundsException e) {}
     }
 
-    public int getSize() {
-        return size;
-    }
-
-    public Character[][] getBombMap() {
-        return bombMap;
-    }
-
     public Character[][] getLoseMap() {
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {

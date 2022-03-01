@@ -57,4 +57,8 @@ public class ConsoleViewer implements Viewer {
     public void showLoseMessage() {
         System.out.println("You lose");
     }
+
+    private void showTime() {
+
+    }
 }
