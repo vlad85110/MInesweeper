@@ -8,7 +8,7 @@ import view.Viewer;
 
 import java.io.IOException;
 
-public record Executor(Controller controller, Field field, GameStarter starter, Viewer viewer) {
+public record Executor(Controller controller, Field field, MapCreator starter, Viewer viewer) {
 
     public void run() {
         boolean notLose = false;

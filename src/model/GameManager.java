@@ -62,7 +62,7 @@ public class GameManager {
         }
 
         var field = new Field(descriptor);
-        var starter = new GameStarter(descriptor, field);
+        var starter = new MapCreator(descriptor, field);
         controller.setField(field);
 
 

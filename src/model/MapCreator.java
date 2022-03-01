@@ -6,14 +6,13 @@ import model.data.Point;
 
 import java.util.Random;
 
-public class GameStarter {
-    private final Field field;
-    private final int size;
-    private final int bombs;
-    private final int safetyRad;
+public class MapCreator {
+    protected final Field field;
+    protected final int size;
+    protected final int bombs;
+    protected final int safetyRad;
 
-    public GameStarter(GameDescriptor descriptor, Field field) {
-        //TODO чтоб в углах тоже был большой квадрат
+    public MapCreator(GameDescriptor descriptor, Field field) {
         this.field = field;
         size = descriptor.size();
         bombs = descriptor.bombs();
