@@ -1,6 +1,7 @@
 package factory;
 
 import controller.commands.Command;
+import model.data.Field;
 import view.Viewer;
 
 import java.io.IOException;

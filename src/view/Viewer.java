@@ -12,4 +12,6 @@ public interface Viewer {
     public void showWinMessage();
 
     public void showLoseMessage();
+
+    public void showLevelChoosing();
 }

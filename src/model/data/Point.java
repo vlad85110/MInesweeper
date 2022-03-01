@@ -20,11 +20,20 @@ public class Point {
         return new Point(x + point.x, y + point.y);
     }
 
+    public Point div(int num) {
+        return new Point(x / num, y / num);
+    }
+
     public boolean opposite(Point other) {
         return signum(x * other.x + y * other.y) < 0;
     }
 
     public boolean inSquare(Point other, int length) {
         return abs(x - other.x) <= length && abs(y - other.y) <= length;
+    }
+
+    @Override
+    public String toString() {
+        return x + " " + y;
     }
 }

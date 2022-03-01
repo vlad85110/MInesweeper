@@ -1,29 +1,16 @@
 package model;
 
 import controller.Controller;
+import controller.commands.Command;
+import controller.commands.Tags;
 import factory.ControllerFactory;
 import factory.ViewFactory;
-import model.data.Field;
-import model.data.GameDescriptor;
 import view.Viewer;
 
-import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Properties;
 
 public class GameManager {
-    private GameDescriptor makeDescriptor(String level) throws IOException, NullPointerException {
-        Properties properties = new Properties();
-        var reader = new FileReader(level + ".config");
-        properties.load(reader);
-
-        int bombs = Integer.parseInt(properties.getProperty("bombs"));
-        int size = Integer.parseInt(properties.getProperty("size"));
-        int safetyRad = Integer.parseInt(properties.getProperty("safetyRad"));
-        return new GameDescriptor(bombs, size, safetyRad);
-    }
-
     public void start() {
         ViewFactory viewFactory;
         ControllerFactory controllerFactory;
@@ -51,22 +38,31 @@ public class GameManager {
 
         viewer.showGreetScreen();
 
+        Command cmd;
+        Tags res = Tags.False;
 
-        var level = controller.waitLevel();
-        GameDescriptor descriptor;
-        try {
-            descriptor = makeDescriptor(level);
-        } catch (IOException e) {
-            viewer.showErrorMessage("can't rum game");
+        cmd = null;
+        while (res == Tags.False) {
+            while (cmd == null) {
+                try {
+                    cmd = controller.waitCommand();
+                } catch (IOException e) {
+                    viewer.showErrorMessage("wrong input, return");
+                }
+            }
+
+            try {
+                res = cmd.run();
+            } catch (IOException e) {
+                viewer.showWarningMessage("incorrect point");
+            }
+        }
+
+        if (res == Tags.Exit) {
             return;
         }
 
-        var field = new Field(descriptor);
-        var starter = new MapCreator(descriptor, field);
-        controller.setField(field);
-
-
-        Executor executor = new Executor(controller, field, starter, viewer);
+        Executor executor = new Executor(controller, viewer);
         executor.run();
     }
 }

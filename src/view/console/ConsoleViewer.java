@@ -16,10 +16,10 @@ public class ConsoleViewer implements Viewer {
     @Override
     public void showGreetScreen() {
         System.out.println("Minesweeper");
-        System.out.println("Choose difficulty:");
-        System.out.println("1.Beginner");
-        System.out.println("2.Intermediate");
-        System.out.println("3.Expert");
+        System.out.println("1.New Game");
+        System.out.println("2.High scores");
+        System.out.println("3.About");
+        System.out.println("4.Exit");
     }
     
     @Override
@@ -27,7 +27,7 @@ public class ConsoleViewer implements Viewer {
         printMap(userView, userView.length);
     }
     
-    public static void printMap(Character[][] field, int size) {
+    public static void printMap(Object[][] field, int size) {
         System.out.print(" " + "|");
         for (int i = 0; i < size; i++) {
             System.out.print(i % 10 + " ");
@@ -56,6 +56,14 @@ public class ConsoleViewer implements Viewer {
     @Override
     public void showLoseMessage() {
         System.out.println("You lose");
+    }
+
+    @Override
+    public void showLevelChoosing() {
+        System.out.println("Choose difficulty:");
+        System.out.println("1.Beginner");
+        System.out.println("2.Intermediate");
+        System.out.println("3.Expert");
     }
 
     private void showTime() {

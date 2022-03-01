@@ -2,9 +2,8 @@ package controller.console;
 
 import controller.AbstractController;
 import controller.commands.Command;
-import controller.commands.CommandDescriptor;
+import controller.commands.descriptors.CommandDescriptor;
 import factory.CommandFactory;
-import model.data.Point;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -13,7 +12,6 @@ import java.util.Scanner;
 
 public class ConsoleController extends AbstractController {
     private final Scanner scanner;
-
 
     private static final HashMap<String, String> difficulties = new HashMap<>() {
        {
@@ -25,39 +23,35 @@ public class ConsoleController extends AbstractController {
 
     public ConsoleController() {
         field = null;
+
         try {
             factory = new CommandFactory();
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         scanner = new Scanner(System.in);
     }
 
     @Override
-    public String waitLevel() {
+    public String waitLevel() throws NullPointerException {
         return difficulties.get(scanner.nextLine().trim()).toLowerCase();
     }
 
     @Override
-    public Command waitCommand() {
-        var cmdStr = scanner.nextLine();
-        var descriptor = parseStr(cmdStr);
+    public Command waitCommand() throws IOException {
+        var cmdStr = scanner.nextLine().trim();
+        var args = cmdStr.split( " ");
 
-        Command command = null;
+        Command command;
         try {
-            command = factory.createObject(descriptor);
+            command = factory.createObject(new CommandDescriptor(args, field));
         } catch (ClassNotFoundException | InvocationTargetException |
                 IllegalAccessException | NoSuchMethodException | InstantiationException e) {
-            e.printStackTrace();
+            throw new IOException("custom");
         }
 
         assert command != null;
         return command;
-    }
-
-    private CommandDescriptor parseStr(String str) {
-        var parts = str.split( " ");
-        var point = new Point(Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
-        return new CommandDescriptor(parts[0], point, field);
     }
 }

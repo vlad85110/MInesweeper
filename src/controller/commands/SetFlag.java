@@ -1,13 +1,18 @@
 package controller.commands;
 
-public class SetFlag extends AbstractCommand {
-    public SetFlag(CommandDescriptor descriptor) {
+import controller.commands.descriptors.CommandDescriptor;
+import model.data.Field;
+
+import java.io.IOException;
+
+public class SetFlag extends AbstractGameCommand {
+    public SetFlag(CommandDescriptor descriptor) throws IOException {
         super(descriptor);
     }
 
     @Override
-    public boolean run() {
-         field.setFlag(descriptor.arg());
-         return true;
+    public Tags run() {
+         field.setFlag(point);
+         return Tags.True;
     }
 }

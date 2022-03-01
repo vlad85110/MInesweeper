@@ -1,6 +1,7 @@
 package factory;
 
 import controller.Controller;
+import model.data.Field;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;

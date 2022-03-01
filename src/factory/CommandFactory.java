@@ -1,7 +1,8 @@
 package factory;
 
 import controller.commands.Command;
-import controller.commands.CommandDescriptor;
+import controller.commands.descriptors.CommandDescriptor;
+import model.data.Field;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -24,14 +25,8 @@ public class CommandFactory extends Factory {
         Command object;
         var descriptor = (CommandDescriptor)desc;
 
-        try {
-            productClass = Class.forName("controller.commands." + names.get(descriptor.name()));
-            object = (Command)productClass.getConstructor(descriptor.getClass()).newInstance(descriptor);
-        } catch (ClassNotFoundException | InvocationTargetException | InstantiationException
-                | IllegalAccessException | NoSuchMethodException e) {
-            System.err.println("Undefined class\n");
-            throw e;
-        }
+        productClass = Class.forName("controller.commands." + names.get(descriptor.args[0]));
+        object = (Command)productClass.getConstructor(descriptor.getClass()).newInstance(descriptor);
 
         return object;
     }

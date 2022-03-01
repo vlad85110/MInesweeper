@@ -4,6 +4,7 @@ import model.data.Field;
 import model.data.GameDescriptor;
 import model.data.Point;
 
+import java.util.HashSet;
 import java.util.Random;
 
 public class MapCreator {
@@ -11,26 +12,28 @@ public class MapCreator {
     protected final int size;
     protected final int bombs;
     protected final int safetyRad;
+    private final int lab;
+    private HashSet<String> labyrinth;
 
     public MapCreator(GameDescriptor descriptor, Field field) {
         this.field = field;
         size = descriptor.size();
         bombs = descriptor.bombs();
         safetyRad = descriptor.safetyRad();
+        lab = descriptor.labyrinth();
     }
 
     public void initField(Point start) {
+        if (lab >= 1) {
+            var labCreator = new LabyrinthCreator(size, field, start);
+            labyrinth = labCreator.getLabyrinth();
+        }
+        else labyrinth = new HashSet<>(){{add(" ");}};
+
         final Random random = new Random();
-        int x, y;
 
         for (int i = 0; i < bombs; i++) {
-            Point point;
-            do {
-                x = random.nextInt(size - 1);
-                y = random.nextInt(size - 1);
-                point = new Point(x, y);
-            } while (field.isMine(point) || point.inSquare(start, safetyRad));
-
+            var point = randPoint(random, start);
             field.setBomb(point);
             fillNeighbours(point);
         }
@@ -43,5 +46,22 @@ public class MapCreator {
                     field.setNum(point.plus(i, j));
             }
         }
+    }
+
+    boolean isBad(Point point, Point start) {
+        return field.isMine(point) || point.inSquare(start, safetyRad) || labyrinth.contains(point.toString());
+    }
+
+    Point randPoint (Random random, Point start) {
+        int x, y;
+
+        Point point;
+        do {
+            x = random.nextInt(size - 1);
+            y = random.nextInt(size - 1);
+            point = new Point(x, y);
+        } while (isBad(point, start));
+
+        return point;
     }
 }

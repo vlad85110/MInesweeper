@@ -1,15 +1,15 @@
 package controller.commands;
 
-import controller.commands.AbstractCommand;
-import controller.commands.CommandDescriptor;
+import controller.commands.descriptors.CommandDescriptor;
+import model.data.Field;
 import model.data.Point;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Open extends AbstractCommand {
-    public Open(CommandDescriptor descriptor) {
+public class Open extends AbstractGameCommand {
+    public Open(CommandDescriptor descriptor) throws IOException {
         super(descriptor);
     }
 
@@ -29,13 +29,11 @@ public class Open extends AbstractCommand {
 
 
     @Override
-    public boolean run() throws IOException {
-        var point = descriptor.arg();
-        var field = descriptor.field();
-        if (field.isMine(point)) return false;
+    public Tags run() throws IOException {
+        if (field.isMine(point)) return Tags.False;
 
         openMain(point);
-        return true;
+        return Tags.True;
     }
 
     public void openMain(Point point) throws IOException {
