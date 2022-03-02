@@ -4,6 +4,7 @@ import model.data.Field;
 import model.data.GameDescriptor;
 import model.data.Point;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Random;
 
@@ -23,7 +24,10 @@ public class MapCreator {
         lab = descriptor.labyrinth();
     }
 
-    public void initField(Point start) {
+    public void initField(Point start) throws IOException {
+        if (!(start.x >= 0 && start.y >= 0 && start.x < size && start.y < size))
+            throw new IOException("incorrect point");
+
         if (lab >= 1) {
             var labCreator = new LabyrinthCreator(size, field, start);
             labyrinth = labCreator.getLabyrinth();

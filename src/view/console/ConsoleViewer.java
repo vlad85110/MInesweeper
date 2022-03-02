@@ -4,6 +4,11 @@ import view.Viewer;
 
 public class ConsoleViewer implements Viewer {
     @Override
+    public void showMessage(String message) {
+        System.out.println(message);
+    }
+
+    @Override
     public void showErrorMessage(String message) {
         System.err.println("Error : " + message);
     }
@@ -66,7 +71,8 @@ public class ConsoleViewer implements Viewer {
         System.out.println("3.Expert");
     }
 
-    private void showTime() {
+    @Override
+    public void showTime() {
 
     }
 }

@@ -66,11 +66,16 @@ public class Executor {
                 } catch (IOException e) {
                     viewer.showErrorMessage("wrong input, return");
                 }
-            }
 
-            if (cmd instanceof Open) {
-                creator.initField((Point)cmd.getArg());
-                field.setStart();
+                if (cmd instanceof Open) {
+                    try {
+                        creator.initField((Point) cmd.getArg());
+                    } catch (IOException e) {
+                        viewer.showErrorMessage(e.getMessage());
+                        cmd = null;
+                    }
+                    field.setStart();
+                }
             }
 
             try {
@@ -106,6 +111,7 @@ public class Executor {
             viewer.getUpdate(field.getLoseMap());
             viewer.showLoseMessage();
         }
+
     }
 
     private GameDescriptor makeDescriptor(String level) throws IOException, NullPointerException {

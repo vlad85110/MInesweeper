@@ -1,18 +1,20 @@
 package controller.commands;
 
-import controller.commands.Command;
+import controller.commands.descriptors.CommandDescriptor;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 
-public class About implements Command {
-    @Override
-    public Tags run() {
-        //TODO
-        return Tags.False;
+public class About extends AbstractWriteCommand {
+    public About(CommandDescriptor descriptor) {
+        super(descriptor);
     }
 
     @Override
-    public Object getArg() {
-        return null;
+    protected String getFileName() {
+        return "about.txt";
     }
 }
