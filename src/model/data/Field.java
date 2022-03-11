@@ -1,5 +1,7 @@
 package model.data;
 
+import java.io.IOException;
+
 public class Field {
     private final int size;
     private final int bombs;
@@ -98,7 +100,7 @@ public class Field {
     }
 
     public boolean outOf(Point point) {
-        return point.x >= size && point.y >= size;
+        return point.x >= size || point.y >= size;
     }
 
     public boolean isOpen(Point point) {

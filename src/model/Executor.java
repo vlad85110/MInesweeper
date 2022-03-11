@@ -12,12 +12,15 @@ import view.Viewer;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Executor {
     private final Controller controller;
     private final Viewer viewer;
 
     private Field field;
+    private long time;
     private MapCreator creator;
 
     public Executor(Controller controller, Viewer viewer) {
@@ -55,18 +58,19 @@ public class Executor {
 
         Tags notLose = Tags.False;
         Command cmd;
-
-        while (!field.isStart() && notLose != Tags.Exit) {
-            viewer.getUpdate(field.getUserView());
-
-            cmd = null;
-            while (cmd == null) {
-                try {
-                    cmd = controller.waitCommand();
-                } catch (IOException e) {
-                    viewer.showErrorMessage("wrong input, return");
-                }
+        Timer timer = new Timer();
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                viewer.showLoseMessage();
+                System.exit(0);
             }
+        };
+
+        timer.schedule(task, time);
+        viewer.startGame();
+        while (!field.isStart() && notLose != Tags.Exit) {
+            cmd = makeCommand(time);
 
             if (cmd instanceof Open) {
                 creator.initField((Point)cmd.getArg());
@@ -82,16 +86,7 @@ public class Executor {
         }
 
         while (notLose == Tags.True && !field.isWin()) {
-            viewer.getUpdate(field.getUserView());
-
-            cmd = null;
-            while (cmd == null) {
-                try {
-                    cmd = controller.waitCommand();
-                } catch (IOException e) {
-                    viewer.showErrorMessage("wrong input, return");
-                }
-            }
+            cmd = makeCommand(time);
 
             try {
                 notLose = cmd.run();
@@ -103,9 +98,24 @@ public class Executor {
         if (field.isWin()) {
             viewer.showWinMessage();
         } else if (notLose == Tags.Exit) {} else {
-            viewer.getUpdate(field.getLoseMap());
+            viewer.getUpdate(field.getLoseMap(), time);
             viewer.showLoseMessage();
         }
+    }
+
+    private Command makeCommand(long time) {
+        Command cmd;
+        viewer.getUpdate(field.getUserView(), time);
+
+        cmd = null;
+        while (cmd == null) {
+            try {
+                cmd = controller.waitCommand();
+            } catch (IOException e) {
+                viewer.showErrorMessage("wrong input, return");
+            }
+        }
+        return cmd;
     }
 
     private GameDescriptor makeDescriptor(String level) throws IOException, NullPointerException {
@@ -117,6 +127,7 @@ public class Executor {
         int size = Integer.parseInt(properties.getProperty("size"));
         int safetyRad = Integer.parseInt(properties.getProperty("safetyRad"));
         int labyrinth = Integer.parseInt(properties.getProperty("labyrinth"));
+        time = (long)Integer.parseInt(properties.getProperty("time")) * 60 * 1000;
 
         return new GameDescriptor(bombs, size, safetyRad, labyrinth);
     }

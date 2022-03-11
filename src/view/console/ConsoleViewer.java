@@ -3,6 +3,13 @@ package view.console;
 import view.Viewer;
 
 public class ConsoleViewer implements Viewer {
+    private static long startTime;
+
+    @Override
+    public void startGame() {
+        startTime = System.currentTimeMillis();
+    }
+
     @Override
     public void showErrorMessage(String message) {
         System.err.println("Error : " + message);
@@ -23,7 +30,8 @@ public class ConsoleViewer implements Viewer {
     }
     
     @Override
-    public void getUpdate(Character[][] userView) {
+    public void getUpdate(Character[][] userView, long time) {
+        showTime((time + startTime) - System.currentTimeMillis());
         printMap(userView, userView.length);
     }
     
@@ -66,7 +74,9 @@ public class ConsoleViewer implements Viewer {
         System.out.println("3.Expert");
     }
 
-    private void showTime() {
-
+    @Override
+    public void showTime(long time) {
+        String output = String.format("%tM:%tS", time, time);
+        System.out.println(output);
     }
 }
