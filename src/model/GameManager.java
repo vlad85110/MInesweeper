@@ -18,7 +18,6 @@ public class GameManager {
         try {
             viewFactory = new ViewFactory();
             controllerFactory = new ControllerFactory();
-
         } catch (IOException e) {
             e.printStackTrace();
             return;
@@ -43,6 +42,7 @@ public class GameManager {
         Tags res = Tags.False;
 
         while (res == Tags.False) {
+            //TODO filenames in config
             cmd = null;
             while (cmd == null) {
                 try {
@@ -55,6 +55,7 @@ public class GameManager {
             try {
                 res = cmd.run();
                 if (res == Tags.Write) {
+                    //TODO format
                     for (var i : (ArrayList<?>)cmd.getArg()) {
                         viewer.showMessage((String)i);
                     }

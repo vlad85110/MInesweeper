@@ -40,6 +40,11 @@ public class ConsoleViewer implements Viewer {
         System.out.println(message);
     }
 
+    @Override
+    public void askUser(String message) {
+        showMessage(message);
+    }
+
     public static void printMap(Object[][] field, int size) {
         System.out.print(" " + "|");
         for (int i = 0; i < size; i++) {

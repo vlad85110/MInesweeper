@@ -12,4 +12,5 @@ public interface Controller {
 
     public Command waitCommand() throws IOException;
 
+    public String waitAnswer();
 }

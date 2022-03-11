@@ -9,17 +9,15 @@ import model.data.GameDescriptor;
 import model.data.Point;
 import view.Viewer;
 
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.Properties;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.io.*;
+import java.util.*;
 
 public class Executor {
     private final Controller controller;
     private final Viewer viewer;
 
     private Field field;
+    private Map<Integer, String> scores;
     private long time;
     private MapCreator creator;
 
@@ -51,6 +49,12 @@ public class Executor {
         field = new Field(descriptor);
         creator = new MapCreator(descriptor, field);
         controller.setField(field);
+
+        try {
+            readScores();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void run() {
@@ -71,7 +75,7 @@ public class Executor {
         viewer.startGame();
 
 
-        while (!field.isStart() && notLose != Tags.Exit) {
+        while (!field.isStart()) {
             viewer.getUpdate(field.getUserView(), time);
 
             cmd = null;
@@ -99,6 +103,9 @@ public class Executor {
                 viewer.showWarningMessage("incorrect point");
                 notLose = Tags.True;
             }
+
+            if (notLose == Tags.Exit)
+                return;
         }
 
         while (notLose == Tags.True && !field.isWin()) {
@@ -122,6 +129,10 @@ public class Executor {
 
         if (field.isWin()) {
             viewer.showWinMessage();
+            try {
+                readScores();
+                writeScores(time);
+            } catch (IOException e) {}
         } else if (notLose == Tags.Exit) {} else {
             viewer.getUpdate(field.getLoseMap(), time);
             viewer.showLoseMessage();
@@ -140,5 +151,40 @@ public class Executor {
         time = (long)Integer.parseInt(properties.getProperty("time")) * 60 * 1000;
 
         return new GameDescriptor(bombs, size, safetyRad, labyrinth);
+    }
+
+    private void readScores() throws IOException {
+        File file = new File("High scores.txt");
+        FileReader fileReader = new FileReader(file);
+        BufferedReader reader = new BufferedReader(fileReader);
+        scores = new TreeMap<>();
+        String line;
+        String [] strArray;
+
+        line = reader.readLine();
+        while (line != null) {
+            strArray = line.split(" ");
+            scores.put(Integer.parseInt(strArray[0]), strArray[1]);
+            line = reader.readLine();
+        }
+
+        fileReader.close();
+        reader.close();
+    }
+
+    private void writeScores(long time) throws IOException {
+        File output = new File("High scores.txt");
+        FileWriter fileWriter = new FileWriter(output);
+
+        viewer.askUser("Who are you?");
+        var name = controller.waitAnswer();
+        scores.put((int)time / 1000, name);
+
+        int j = 1;
+        for (var i : scores.entrySet()) {
+            if (j >= 5) break;
+            fileWriter.write(i.getKey() + " " + i.getValue() + "\n");
+            j++;
+        }
     }
 }
