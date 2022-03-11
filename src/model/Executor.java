@@ -12,12 +12,15 @@ import view.Viewer;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Executor {
     private final Controller controller;
     private final Viewer viewer;
 
     private Field field;
+    private long time;
     private MapCreator creator;
 
     public Executor(Controller controller, Viewer viewer) {
@@ -55,9 +58,21 @@ public class Executor {
 
         Tags notLose = Tags.False;
         Command cmd;
+        Timer timer = new Timer();
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                viewer.showLoseMessage();
+                System.exit(0);
+            }
+        };
+
+        timer.schedule(task, time);
+        viewer.startGame();
+
 
         while (!field.isStart() && notLose != Tags.Exit) {
-            viewer.getUpdate(field.getUserView());
+            viewer.getUpdate(field.getUserView(), time);
 
             cmd = null;
             while (cmd == null) {
@@ -87,7 +102,7 @@ public class Executor {
         }
 
         while (notLose == Tags.True && !field.isWin()) {
-            viewer.getUpdate(field.getUserView());
+            viewer.getUpdate(field.getUserView(), time);
 
             cmd = null;
             while (cmd == null) {
@@ -108,10 +123,9 @@ public class Executor {
         if (field.isWin()) {
             viewer.showWinMessage();
         } else if (notLose == Tags.Exit) {} else {
-            viewer.getUpdate(field.getLoseMap());
+            viewer.getUpdate(field.getLoseMap(), time);
             viewer.showLoseMessage();
         }
-
     }
 
     private GameDescriptor makeDescriptor(String level) throws IOException, NullPointerException {
@@ -123,6 +137,7 @@ public class Executor {
         int size = Integer.parseInt(properties.getProperty("size"));
         int safetyRad = Integer.parseInt(properties.getProperty("safetyRad"));
         int labyrinth = Integer.parseInt(properties.getProperty("labyrinth"));
+        time = (long)Integer.parseInt(properties.getProperty("time")) * 60 * 1000;
 
         return new GameDescriptor(bombs, size, safetyRad, labyrinth);
     }

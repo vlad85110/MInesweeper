@@ -55,7 +55,7 @@ public class GameManager {
             try {
                 res = cmd.run();
                 if (res == Tags.Write) {
-                    for (var i : (ArrayList)cmd.getArg()) {
+                    for (var i : (ArrayList<?>)cmd.getArg()) {
                         viewer.showMessage((String)i);
                     }
                     res = Tags.False;

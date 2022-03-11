@@ -3,9 +3,11 @@ package view.console;
 import view.Viewer;
 
 public class ConsoleViewer implements Viewer {
+    private static long startTime;
+
     @Override
-    public void showMessage(String message) {
-        System.out.println(message);
+    public void startGame() {
+        startTime = System.currentTimeMillis();
     }
 
     @Override
@@ -28,10 +30,16 @@ public class ConsoleViewer implements Viewer {
     }
     
     @Override
-    public void getUpdate(Character[][] userView) {
+    public void getUpdate(Character[][] userView, long time) {
+        showTime((time + startTime) - System.currentTimeMillis());
         printMap(userView, userView.length);
     }
-    
+
+    @Override
+    public void showMessage(String message) {
+        System.out.println(message);
+    }
+
     public static void printMap(Object[][] field, int size) {
         System.out.print(" " + "|");
         for (int i = 0; i < size; i++) {
@@ -72,7 +80,8 @@ public class ConsoleViewer implements Viewer {
     }
 
     @Override
-    public void showTime() {
-
+    public void showTime(long time) {
+        String output = String.format("%tM:%tS", time, time);
+        System.out.println(output);
     }
 }

@@ -1,13 +1,13 @@
 package view;
 
 public interface Viewer {
-    public void getUpdate(Character [][] userView);
+    public void startGame();
+
+    public void getUpdate(Character [][] userView, long time);
 
     public void showMessage(String message);
 
     public void showErrorMessage(String message);
-
-    public void showTime();
 
     public void showWarningMessage(String message);
 
@@ -18,4 +18,6 @@ public interface Viewer {
     public void showLoseMessage();
 
     public void showLevelChoosing();
+
+    public void showTime(long time);
 }

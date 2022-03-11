@@ -11,8 +11,11 @@ public class SetFlag extends AbstractGameCommand {
     }
 
     @Override
-    public Tags run() {
-         field.setFlag(point);
-         return Tags.True;
+    public Tags run() throws IOException {
+        if (field.outOf(point)) {
+            throw new IOException();
+        }
+        field.setFlag(point);
+        return Tags.True;
     }
 }
