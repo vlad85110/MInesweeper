@@ -9,6 +9,7 @@ import view.Viewer;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 
 public class GameManager {
     public void start() {
@@ -41,8 +42,8 @@ public class GameManager {
         Command cmd;
         Tags res = Tags.False;
 
-        cmd = null;
         while (res == Tags.False) {
+            cmd = null;
             while (cmd == null) {
                 try {
                     cmd = controller.waitCommand();
@@ -53,8 +54,14 @@ public class GameManager {
 
             try {
                 res = cmd.run();
+                if (res == Tags.Write) {
+                    for (var i : (ArrayList)cmd.getArg()) {
+                        viewer.showMessage((String)i);
+                    }
+                    res = Tags.False;
+                }
             } catch (IOException e) {
-                viewer.showWarningMessage("incorrect point");
+                viewer.showWarningMessage("Can't run command");
             }
         }
 

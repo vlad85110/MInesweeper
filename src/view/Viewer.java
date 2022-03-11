@@ -5,7 +5,11 @@ public interface Viewer {
 
     public void getUpdate(Character [][] userView, long time);
 
+    public void showMessage(String message);
+
     public void showErrorMessage(String message);
+
+    public void showTime();
 
     public void showWarningMessage(String message);
 

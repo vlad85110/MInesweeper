@@ -1,7 +1,6 @@
 package controller.commands;
 
 import controller.commands.descriptors.CommandDescriptor;
-import model.data.Field;
 import model.data.Point;
 
 import java.io.IOException;

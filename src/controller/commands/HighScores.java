@@ -1,18 +1,17 @@
 package controller.commands;
 
 import controller.commands.Command;
+import controller.commands.descriptors.CommandDescriptor;
 
 import java.io.IOException;
 
-public class HighScores implements Command {
-    @Override
-    public Tags run() {
-        //TODO
-        return Tags.False;
+public class HighScores extends AbstractWriteCommand {
+    public HighScores(CommandDescriptor descriptor) {
+        super(descriptor);
     }
 
     @Override
-    public Object getArg() {
-        return null;
+    protected String getFileName() {
+        return "High scores.txt";
     }
 }
