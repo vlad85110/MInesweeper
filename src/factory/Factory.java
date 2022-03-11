@@ -1,7 +1,5 @@
 package factory;
 
-import model.data.Field;
-
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;

@@ -69,12 +69,28 @@ public class Executor {
 
         timer.schedule(task, time);
         viewer.startGame();
-        while (!field.isStart() && notLose != Tags.Exit) {
-            cmd = makeCommand(time);
 
-            if (cmd instanceof Open) {
-                creator.initField((Point)cmd.getArg());
-                field.setStart();
+
+        while (!field.isStart() && notLose != Tags.Exit) {
+            viewer.getUpdate(field.getUserView(), time);
+
+            cmd = null;
+            while (cmd == null) {
+                try {
+                    cmd = controller.waitCommand();
+                } catch (IOException e) {
+                    viewer.showErrorMessage("wrong input, return");
+                }
+
+                if (cmd instanceof Open) {
+                    try {
+                        creator.initField((Point) cmd.getArg());
+                    } catch (IOException e) {
+                        viewer.showErrorMessage(e.getMessage());
+                        cmd = null;
+                    }
+                    field.setStart();
+                }
             }
 
             try {
@@ -86,7 +102,16 @@ public class Executor {
         }
 
         while (notLose == Tags.True && !field.isWin()) {
-            cmd = makeCommand(time);
+            viewer.getUpdate(field.getUserView(), time);
+
+            cmd = null;
+            while (cmd == null) {
+                try {
+                    cmd = controller.waitCommand();
+                } catch (IOException e) {
+                    viewer.showErrorMessage("wrong input, return");
+                }
+            }
 
             try {
                 notLose = cmd.run();
@@ -101,21 +126,6 @@ public class Executor {
             viewer.getUpdate(field.getLoseMap(), time);
             viewer.showLoseMessage();
         }
-    }
-
-    private Command makeCommand(long time) {
-        Command cmd;
-        viewer.getUpdate(field.getUserView(), time);
-
-        cmd = null;
-        while (cmd == null) {
-            try {
-                cmd = controller.waitCommand();
-            } catch (IOException e) {
-                viewer.showErrorMessage("wrong input, return");
-            }
-        }
-        return cmd;
     }
 
     private GameDescriptor makeDescriptor(String level) throws IOException, NullPointerException {

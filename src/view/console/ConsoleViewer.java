@@ -34,7 +34,12 @@ public class ConsoleViewer implements Viewer {
         showTime((time + startTime) - System.currentTimeMillis());
         printMap(userView, userView.length);
     }
-    
+
+    @Override
+    public void showMessage(String message) {
+        System.out.println(message);
+    }
+
     public static void printMap(Object[][] field, int size) {
         System.out.print(" " + "|");
         for (int i = 0; i < size; i++) {

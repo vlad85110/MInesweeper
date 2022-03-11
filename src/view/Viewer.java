@@ -9,8 +9,6 @@ public interface Viewer {
 
     public void showErrorMessage(String message);
 
-    public void showTime();
-
     public void showWarningMessage(String message);
 
     public void showGreetScreen();
