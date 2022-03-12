@@ -5,6 +5,7 @@ import controller.commands.Command;
 import controller.commands.Tags;
 import factory.ControllerFactory;
 import factory.ViewFactory;
+import model.data.ControllerDescriptor;
 import view.Viewer;
 
 import java.io.IOException;
@@ -27,7 +28,7 @@ public class GameManager {
         Controller controller = null;
         try {
             viewer = viewFactory.createObject(null);
-            controller = controllerFactory.createObject(null);
+            controller = controllerFactory.createObject(new ControllerDescriptor(viewer));
         } catch (ClassNotFoundException | InvocationTargetException | InstantiationException
                 | IllegalAccessException | NoSuchMethodException e) {
             e.printStackTrace();
@@ -56,9 +57,11 @@ public class GameManager {
                 res = cmd.run();
                 if (res == Tags.Write) {
                     //TODO format
+                    StringBuilder message = new StringBuilder();
                     for (var i : (ArrayList<?>)cmd.getArg()) {
-                        viewer.showMessage((String)i);
+                        message.append((String) i);
                     }
+                    viewer.showMessage(message.toString());
                     res = Tags.False;
                 }
             } catch (IOException e) {

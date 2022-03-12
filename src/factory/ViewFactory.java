@@ -6,6 +6,7 @@ import view.Viewer;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Locale;
 
 public class ViewFactory extends Factory {
     public ViewFactory() throws IOException, NullPointerException {
@@ -19,7 +20,8 @@ public class ViewFactory extends Factory {
         Viewer object;
 
         try {
-            productClass = Class.forName("view.console." + names.get("interface") + "Viewer");
+            productClass = Class.forName("view." + names.get("interface").toLowerCase() +
+                    "." + names.get("interface") + "Viewer");
             object = (Viewer)productClass.getConstructor().newInstance();
         } catch (ClassNotFoundException | InvocationTargetException | InstantiationException
                 | IllegalAccessException | NoSuchMethodException e) {

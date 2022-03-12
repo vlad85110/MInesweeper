@@ -22,4 +22,6 @@ public interface Viewer {
     void showLevelChoosing();
 
     void showTime(long time);
+
+    String waitAction() throws InterruptedException;
 }

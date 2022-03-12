@@ -1,6 +1,7 @@
 package factory;
 
 import controller.Controller;
+import model.data.ControllerDescriptor;
 import model.data.Field;
 
 import java.io.IOException;
@@ -18,9 +19,12 @@ public class ControllerFactory extends Factory {
         Class<?> productClass;
         Controller object;
 
+        var descriptor = (ControllerDescriptor)desc;
+
         try {
-            productClass = Class.forName("controller.console." + names.get("interface") + "Controller");
-            object = (Controller)productClass.getConstructor().newInstance();
+            productClass = Class.forName("controller." + names.get("interface").toLowerCase() +
+                    "." + names.get("interface") + "Controller");
+            object = (Controller)productClass.getConstructor(descriptor.getClass()).newInstance(descriptor);
         } catch (ClassNotFoundException | InvocationTargetException | InstantiationException
                 | IllegalAccessException | NoSuchMethodException e) {
             System.err.println("Undefined class\n");

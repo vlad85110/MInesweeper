@@ -89,4 +89,9 @@ public class ConsoleViewer implements Viewer {
         String output = String.format("%tM:%tS", time, time);
         System.out.println(output);
     }
+
+    @Override
+    public String waitAction() {
+        return null;
+    }
 }

@@ -21,7 +21,7 @@ public class ConsoleController extends AbstractController {
         }
     };
 
-    public ConsoleController() {
+    public ConsoleController(Object desc) {
         field = null;
 
         try {
@@ -46,17 +46,6 @@ public class ConsoleController extends AbstractController {
     @Override
     public Command waitCommand() throws IOException {
         var cmdStr = scanner.nextLine().trim();
-        var args = cmdStr.split( " ");
-
-        Command command;
-        try {
-            command = factory.createObject(new CommandDescriptor(args, field));
-        } catch (ClassNotFoundException | InvocationTargetException |
-                IllegalAccessException | NoSuchMethodException | InstantiationException e) {
-            throw new IOException("custom");
-        }
-
-        assert command != null;
-        return command;
+        return makeCommand(cmdStr);
     }
 }
