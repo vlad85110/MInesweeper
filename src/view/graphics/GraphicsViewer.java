@@ -12,12 +12,13 @@ public class GraphicsViewer implements Viewer {
     private final JFrame frame;
     private String action;
     private static long startTime;
+    private boolean flag;
     private JPanel greetScreen;
     private JPanel levels;
-    //private final ActionListener listener;
 
     public GraphicsViewer() {
         frame = new JFrame("Minesweeper");
+        flag = false;
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setSize(new Dimension(700,700));
         createGreetScreen();
@@ -48,12 +49,24 @@ public class GraphicsViewer implements Viewer {
 
     @Override
     public void getUpdate(Character[][] userView, long time) {
+        if (!flag) {
+            levels.setVisible(false);
+        }
+
 
     }
 
     @Override
     public void showMessage(String message) {
+        JFrame frame = new JFrame("");
+        var list = message.split("\n");
+        var text = new JList<String>(list);
 
+        text.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        frame.add(text);
+        frame.setSize(new Dimension(200,200));
+        frame.setVisible(true);
     }
 
     @Override

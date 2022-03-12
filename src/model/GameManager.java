@@ -60,6 +60,7 @@ public class GameManager {
                     StringBuilder message = new StringBuilder();
                     for (var i : (ArrayList<?>)cmd.getArg()) {
                         message.append((String) i);
+                        message.append("\n");
                     }
                     viewer.showMessage(message.toString());
                     res = Tags.False;

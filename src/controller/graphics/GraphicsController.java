@@ -7,7 +7,6 @@ import model.data.ControllerDescriptor;
 import view.Viewer;
 
 import java.io.IOException;
-import java.util.Locale;
 
 public class GraphicsController extends AbstractController {
     private final Viewer viewer;
