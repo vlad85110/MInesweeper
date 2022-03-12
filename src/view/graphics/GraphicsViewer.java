@@ -1,5 +1,6 @@
 package view.graphics;
 
+import model.data.Commands;
 import view.Viewer;
 
 import javax.swing.*;
@@ -19,6 +20,7 @@ public class GraphicsViewer implements Viewer {
         frame = new JFrame("Minesweeper");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setSize(new Dimension(700,700));
+        frame.setVisible(true);
         createGreetScreen();
         createLevels();
 
@@ -98,29 +100,29 @@ public class GraphicsViewer implements Viewer {
 
     private void createGreetScreen() {
         greetScreen = new JPanel();
-        greetScreen.add(createButton("New game"));
-        greetScreen.add(createButton("High scores"));
-        greetScreen.add(createButton("About"));
-        greetScreen.add(createButton("Exit"));
+        greetScreen.add(createMenuButton("New game"));
+        greetScreen.add(createMenuButton("High scores"));
+        greetScreen.add(createMenuButton("About"));
+        greetScreen.add(createMenuButton("Exit"));
         greetScreen.setLayout(new BoxLayout(greetScreen, BoxLayout.Y_AXIS));
     }
 
     private void createLevels() {
         levels = new JPanel();
-        levels.add(createButton("Beginner"));
-        levels.add(createButton("Intermediate"));
-        levels.add(createButton("Expert"));
+        levels.add(createMenuButton("Beginner"));
+        levels.add(createMenuButton("Intermediate"));
+        levels.add(createMenuButton("Expert"));
         levels.setLayout(new BoxLayout(levels, BoxLayout.Y_AXIS));
     }
 
-    private JButton createButton(String caption) {
+    private JButton createMenuButton(String caption) {
         var button = new JButton(caption);
         button.setAlignmentX(Component.CENTER_ALIGNMENT);
-        button.setActionCommand(caption);
-        var listener = new ActionListener(){
+        button.setActionCommand(Commands.commands.get(caption));
+        var listener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                action = "1";
+                action = e.getActionCommand();
             }
         };
         button.addActionListener(listener);
@@ -129,7 +131,6 @@ public class GraphicsViewer implements Viewer {
 
     private void showPanel(JPanel panel) {
         frame.setContentPane(panel);
-        frame.setVisible(true);
         panel.setVisible(true);
     }
 }
