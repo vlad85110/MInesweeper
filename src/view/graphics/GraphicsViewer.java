@@ -20,10 +20,8 @@ public class GraphicsViewer implements Viewer {
         frame = new JFrame("Minesweeper");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setSize(new Dimension(700,700));
-        frame.setVisible(true);
         createGreetScreen();
         createLevels();
-
     }
 
     @Override
@@ -38,7 +36,9 @@ public class GraphicsViewer implements Viewer {
                 break;
             }
         }
-        return action;
+        var tmp = action;
+        action = null;
+        return tmp;
     }
 
     @Override
@@ -132,5 +132,6 @@ public class GraphicsViewer implements Viewer {
     private void showPanel(JPanel panel) {
         frame.setContentPane(panel);
         panel.setVisible(true);
+        frame.setVisible(true);
     }
 }
