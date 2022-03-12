@@ -39,6 +39,11 @@ public class ConsoleController extends AbstractController {
     }
 
     @Override
+    public String waitAnswer() {
+        return scanner.nextLine().trim();
+    }
+
+    @Override
     public Command waitCommand() throws IOException {
         var cmdStr = scanner.nextLine().trim();
         var args = cmdStr.split( " ");

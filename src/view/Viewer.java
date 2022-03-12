@@ -1,23 +1,25 @@
 package view;
 
 public interface Viewer {
-    public void startGame();
+    void startGame();
 
-    public void getUpdate(Character [][] userView, long time);
+    void getUpdate(Character[][] userView, long time);
 
-    public void showMessage(String message);
+    void showMessage(String message);
 
-    public void showErrorMessage(String message);
+    void askUser(String message);
 
-    public void showWarningMessage(String message);
+    void showErrorMessage(String message);
 
-    public void showGreetScreen();
+    void showWarningMessage(String message);
 
-    public void showWinMessage();
+    void showGreetScreen();
 
-    public void showLoseMessage();
+    void showWinMessage();
 
-    public void showLevelChoosing();
+    void showLoseMessage();
 
-    public void showTime(long time);
+    void showLevelChoosing();
+
+    void showTime(long time);
 }
