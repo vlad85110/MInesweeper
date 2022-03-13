@@ -50,6 +50,10 @@ public class Field {
         userView[point.x][point.y] = 'f';
     }
 
+    public void removeFlag(Point point) {
+        userView[point.x][point.y] = 'x';
+    }
+
     public void openSell(Point point) {
         try {
             if (!openCells[point.x][point.y]) {

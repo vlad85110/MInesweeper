@@ -134,7 +134,12 @@ public class GraphicsViewer implements Viewer {
             public void mouseClicked(MouseEvent e) {
                 if (SwingUtilities.isRightMouseButton(e)) {
                     var button = (FieldButton)e.getComponent();
-                    action = "set " + button.getPos();
+                    if (button.isFlag()) {
+                        action = "remove " + button.getPos();
+                    } else {
+                        action = "set " + button.getPos();
+                        button.setFlag(true);
+                    }
                 }
             }
 

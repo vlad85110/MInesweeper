@@ -13,7 +13,6 @@ public class TimeThread extends Thread {
     @Override
     public void run() {
         JFrame frame = new JFrame("");
-        long tm = 1;
         DefaultListModel<String> listModel = new DefaultListModel<>();
         var list = new JList<>(listModel);
         frame.setSize(new Dimension(200,200));
@@ -21,16 +20,22 @@ public class TimeThread extends Thread {
         frame.setVisible(true);
 
         long startTime = System.currentTimeMillis();
+        long prevTime = startTime;
+        long tm = 1;
+
+        String output = String.format("%tM:%tS", time, time);
+        listModel.addElement(output);
+
         while (tm != 0) {
-            tm = ((time + startTime) - System.currentTimeMillis());
-            String output = String.format("%tM:%tS", tm, tm);
-            listModel.addElement(output);
-            try {
-                Thread.sleep(999);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            if (((System.currentTimeMillis() - prevTime)) / 1000 >= 1) {
+                prevTime = System.currentTimeMillis();
+                tm = ((time + startTime) - System.currentTimeMillis());
+
+                listModel.removeElement(output);
+                output = String.format("%tM:%tS", tm, tm);
+                listModel.addElement(output);
             }
-            listModel.removeElementAt(0);
+
         }
     }
 }

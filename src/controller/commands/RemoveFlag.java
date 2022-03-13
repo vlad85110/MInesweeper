@@ -4,8 +4,8 @@ import controller.commands.descriptors.CommandDescriptor;
 
 import java.io.IOException;
 
-public class SetFlag extends AbstractGameCommand {
-    public SetFlag(CommandDescriptor descriptor) throws IOException {
+public class RemoveFlag extends AbstractGameCommand {
+    public RemoveFlag(CommandDescriptor descriptor) throws IOException {
         super(descriptor);
     }
 
@@ -14,7 +14,7 @@ public class SetFlag extends AbstractGameCommand {
         if (field.outOf(point)) {
             throw new IOException();
         }
-        field.setFlag(point);
+        field.removeFlag(point);
         return Tags.True;
     }
 }
