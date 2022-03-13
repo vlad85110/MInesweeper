@@ -8,6 +8,7 @@ import model.data.Field;
 import model.data.GameDescriptor;
 import model.data.Point;
 import view.Viewer;
+import view.console.ConsoleViewer;
 
 import java.io.*;
 import java.util.*;
@@ -74,7 +75,6 @@ public class Executor {
         timer.schedule(task, time);
         viewer.startGame();
 
-
         while (!field.isStart()) {
             viewer.getUpdate(field.getUserView(), time);
 
@@ -98,7 +98,7 @@ public class Executor {
             }
 
             try {
-                    notLose = cmd.run();
+                notLose = cmd.run();
             } catch (IOException e) {
                 viewer.showMessage("incorrect point");
                 notLose = Tags.True;

@@ -57,6 +57,7 @@ public class GraphicsViewer implements Viewer {
             levels.setVisible(false);
             createField(userView);
             showPanel(field);
+            showTime(time);
             flag = true;
         } else {
             for (int i = 0; i < userView.length; i++) {
@@ -99,7 +100,8 @@ public class GraphicsViewer implements Viewer {
 
     @Override
     public void showTime(long time) {
-
+        Thread sub = new TimeThread(time);
+        sub.start();
     }
 
     private void createGreetScreen() {

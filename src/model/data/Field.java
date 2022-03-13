@@ -118,4 +118,8 @@ public class Field {
     public boolean isWin() {
         return opened == (size * size - bombs);
     }
+
+    public Character[][] getBombMap() {
+        return bombMap;
+    }
 }
