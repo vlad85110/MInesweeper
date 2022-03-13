@@ -5,19 +5,23 @@ import view.Viewer;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
+import java.util.HashMap;
 
 public class GraphicsViewer implements Viewer {
-    private final JFrame frame;
     private String action;
     private static long startTime;
     private boolean flag;
+
+    private final JFrame frame;
     private JPanel greetScreen;
     private JPanel levels;
+    private JPanel field;
+    private final HashMap<String, FieldButton> buttons;
 
     public GraphicsViewer() {
         frame = new JFrame("Minesweeper");
+        buttons = new HashMap<>();
         flag = false;
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setSize(new Dimension(700,700));
@@ -51,16 +55,23 @@ public class GraphicsViewer implements Viewer {
     public void getUpdate(Character[][] userView, long time) {
         if (!flag) {
             levels.setVisible(false);
+            createField(userView);
+            showPanel(field);
+            flag = true;
+        } else {
+            for (int i = 0; i < userView.length; i++) {
+                for (int j = 0; j < userView.length; j++) {
+                    buttons.get(j + " " + i).update(userView[j][i]);
+                }
+            }
         }
-
-
     }
 
     @Override
     public void showMessage(String message) {
         JFrame frame = new JFrame("");
         var list = message.split("\n");
-        var text = new JList<String>(list);
+        var text = new JList<>(list);
 
         text.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -75,29 +86,9 @@ public class GraphicsViewer implements Viewer {
     }
 
     @Override
-    public void showErrorMessage(String message) {
-
-    }
-
-    @Override
-    public void showWarningMessage(String message) {
-
-    }
-
-    @Override
     public void showGreetScreen() {
-        //Todo clear
+        //field.setVisible(false);
         showPanel(greetScreen);
-    }
-
-    @Override
-    public void showWinMessage() {
-
-    }
-
-    @Override
-    public void showLoseMessage() {
-
     }
 
     @Override
@@ -128,6 +119,54 @@ public class GraphicsViewer implements Viewer {
         levels.setLayout(new BoxLayout(levels, BoxLayout.Y_AXIS));
     }
 
+    private void createField(Character[][] userView) {
+        field = new JPanel();
+        var listener = new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+               action = "open " + e.getActionCommand();
+            }
+        };
+        var mListener = new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (SwingUtilities.isRightMouseButton(e)) {
+                    var button = (FieldButton)e.getComponent();
+                    action = "set " + button.getPos();
+                }
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+        };
+
+        for (int i = 0; i < userView.length; i++) {
+            for (int j = 0; j < userView.length; j++) {
+                var button = createFieldButton(frame.getHeight()/userView.length - 10, listener, i, j);
+                field.add(button);
+                button.setVisible(true);
+                button.addMouseListener(mListener);
+            }
+        }
+    }
+
     private JButton createMenuButton(String caption) {
         var button = new JButton(caption);
         button.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -139,6 +178,15 @@ public class GraphicsViewer implements Viewer {
             }
         };
         button.addActionListener(listener);
+        return button;
+    }
+
+    private FieldButton createFieldButton(int size, ActionListener listener, Integer i, Integer j) {
+        var button = new FieldButton(i.toString() + " " + j.toString());
+        button.setPreferredSize(new Dimension(size,size));
+        button.setActionCommand(button.getPos());
+        button.addActionListener(listener);
+        buttons.put(button.getPos(), button);
         return button;
     }
 

@@ -34,7 +34,7 @@ public class Executor {
             try {
                 level = controller.waitLevel();
             } catch (NullPointerException e) {
-                viewer.showErrorMessage("wrong input. return");
+                viewer.showMessage("wrong input. return");
             }
         }
 
@@ -42,7 +42,7 @@ public class Executor {
         try {
             descriptor = makeDescriptor(level);
         } catch (IOException e) {
-            viewer.showErrorMessage("can't rum game");
+            viewer.showMessage("can't rum game");
             return;
         }
 
@@ -66,7 +66,7 @@ public class Executor {
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-                viewer.showLoseMessage();
+                viewer.showMessage("You lose, time is off");
                 System.exit(0);
             }
         };
@@ -83,14 +83,14 @@ public class Executor {
                 try {
                     cmd = controller.waitCommand();
                 } catch (IOException e) {
-                    viewer.showErrorMessage("wrong input, return");
+                    viewer.showMessage("wrong input, return");
                 }
 
                 if (cmd instanceof Open) {
                     try {
                         creator.initField((Point) cmd.getArg());
                     } catch (IOException e) {
-                        viewer.showErrorMessage(e.getMessage());
+                        viewer.showMessage(e.getMessage());
                         cmd = null;
                     }
                     field.setStart();
@@ -98,9 +98,9 @@ public class Executor {
             }
 
             try {
-                notLose = cmd.run();
+                    notLose = cmd.run();
             } catch (IOException e) {
-                viewer.showWarningMessage("incorrect point");
+                viewer.showMessage("incorrect point");
                 notLose = Tags.True;
             }
 
@@ -116,26 +116,26 @@ public class Executor {
                 try {
                     cmd = controller.waitCommand();
                 } catch (IOException e) {
-                    viewer.showErrorMessage("wrong input, return");
+                    viewer.showMessage("wrong input, return");
                 }
             }
 
             try {
                 notLose = cmd.run();
             } catch (IOException e) {
-                viewer.showWarningMessage("incorrect point");
+                viewer.showMessage("incorrect point");
             }
         }
 
         if (field.isWin()) {
-            viewer.showWinMessage();
+            viewer.showMessage("You win!");
             try {
                 readScores();
                 writeScores(time);
             } catch (IOException e) {}
         } else if (notLose == Tags.Exit) {} else {
             viewer.getUpdate(field.getLoseMap(), time);
-            viewer.showLoseMessage();
+            viewer.showMessage("You lose");
         }
     }
 

@@ -9,15 +9,7 @@ public interface Viewer {
 
     void askUser(String message);
 
-    void showErrorMessage(String message);
-
-    void showWarningMessage(String message);
-
     void showGreetScreen();
-
-    void showWinMessage();
-
-    void showLoseMessage();
 
     void showLevelChoosing();
 

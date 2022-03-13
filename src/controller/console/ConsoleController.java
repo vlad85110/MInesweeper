@@ -4,6 +4,7 @@ import controller.AbstractController;
 import controller.commands.Command;
 import controller.commands.descriptors.CommandDescriptor;
 import factory.CommandFactory;
+import model.data.ControllerDescriptor;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -21,7 +22,7 @@ public class ConsoleController extends AbstractController {
         }
     };
 
-    public ConsoleController(Object desc) {
+    public ConsoleController(ControllerDescriptor desc) {
         field = null;
 
         try {

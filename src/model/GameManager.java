@@ -49,7 +49,7 @@ public class GameManager {
                 try {
                     cmd = controller.waitCommand();
                 } catch (IOException e) {
-                    viewer.showErrorMessage("wrong input, return");
+                    viewer.showMessage("wrong input, return");
                 }
             }
 
@@ -66,12 +66,12 @@ public class GameManager {
                     res = Tags.False;
                 }
             } catch (IOException e) {
-                viewer.showWarningMessage("Can't run command");
+                viewer.showMessage("Can't run command");
             }
         }
 
         if (res == Tags.Exit) {
-            return;
+            System.exit(0);
         }
 
         Executor executor = new Executor(controller, viewer);

@@ -11,16 +11,6 @@ public class ConsoleViewer implements Viewer {
     }
 
     @Override
-    public void showErrorMessage(String message) {
-        System.err.println("Error : " + message);
-    }
-
-    @Override
-    public void showWarningMessage(String message) {
-        System.out.println("Warning : " + message);
-    }
-
-    @Override
     public void showGreetScreen() {
         System.out.println("Minesweeper");
         System.out.println("1.New Game");
@@ -64,16 +54,6 @@ public class ConsoleViewer implements Viewer {
             System.out.println();
         }
         System.out.println();
-    }
-
-    @Override
-    public void showWinMessage() {
-        System.out.println("You win!");
-    }
-
-    @Override
-    public void showLoseMessage() {
-        System.out.println("You lose");
     }
 
     @Override
