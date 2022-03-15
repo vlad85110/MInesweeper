@@ -16,4 +16,6 @@ public interface Viewer {
     void showTime(long time);
 
     String waitAction() throws InterruptedException;
+
+    void setFlag (boolean flag);
 }

@@ -13,7 +13,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 public class GameManager {
-    public void start() {
+    private Viewer viewer;
+    private Controller controller;
+    private Executor executor;
+
+    public GameManager() {
         ViewFactory viewFactory;
         ControllerFactory controllerFactory;
         try {
@@ -24,8 +28,6 @@ public class GameManager {
             return;
         }
 
-        Viewer viewer = null;
-        Controller controller = null;
         try {
             viewer = viewFactory.createObject(null);
             controller = controllerFactory.createObject(new ControllerDescriptor(viewer));
@@ -36,7 +38,10 @@ public class GameManager {
 
         assert viewer != null;
         assert controller != null;
+        executor = new Executor(controller, viewer);
+    }
 
+    public Tags start() {
         viewer.showGreetScreen();
 
         Command cmd;
@@ -74,7 +79,11 @@ public class GameManager {
             System.exit(0);
         }
 
-        Executor executor = new Executor(controller, viewer);
-        executor.run();
+        Tags tag = null;
+        while (tag != Tags.Exit && tag != Tags.Menu) {
+            tag = executor.run();
+        }
+
+        return tag;
     }
 }

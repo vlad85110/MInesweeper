@@ -65,6 +65,10 @@ public class ConsoleViewer implements Viewer {
     }
 
     @Override
+    public void setFlag(boolean flag) {
+    }
+
+    @Override
     public void showTime(long time) {
         String output = String.format("%tM:%tS", time, time);
         System.out.println(output);

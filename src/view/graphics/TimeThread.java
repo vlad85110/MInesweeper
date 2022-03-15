@@ -11,7 +11,7 @@ public class TimeThread extends Thread {
     }
 
     @Override
-    public void run() {
+    public synchronized void run() {
         JFrame frame = new JFrame("");
         DefaultListModel<String> listModel = new DefaultListModel<>();
         var list = new JList<>(listModel);
@@ -31,7 +31,7 @@ public class TimeThread extends Thread {
                 prevTime = System.currentTimeMillis();
                 tm = ((time + startTime) - System.currentTimeMillis());
 
-                listModel.removeElement(output);
+                listModel.removeAllElements();
                 output = String.format("%tM:%tS", tm, tm);
                 listModel.addElement(output);
             }
