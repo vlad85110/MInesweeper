@@ -31,6 +31,11 @@ public class ConsoleViewer implements Viewer {
     }
 
     @Override
+    public void showWarning(String message) {
+        showMessage(message);
+    }
+
+    @Override
     public void askUser(String message) {
         showMessage(message);
     }
@@ -65,10 +70,9 @@ public class ConsoleViewer implements Viewer {
     }
 
     @Override
-    public void setFlag(boolean flag) {
+    public void setAlreadyCreated(boolean alreadyCreated) {
     }
 
-    @Override
     public void showTime(long time) {
         String output = String.format("%tM:%tS", time, time);
         System.out.println(output);

@@ -6,7 +6,6 @@ import controller.commands.Menu;
 import controller.commands.Open;
 import controller.commands.Tags;
 import controller.commands.descriptors.CommandDescriptor;
-import model.data.CmdThread;
 import model.data.Field;
 import model.data.GameDescriptor;
 import model.data.Point;
@@ -54,7 +53,7 @@ public class Executor {
         field = new Field(descriptor);
         creator = new MapCreator(descriptor, field);
         controller.setField(field);
-        viewer.setFlag(false);
+        viewer.setAlreadyCreated(false);
     }
 
     public void setCmd(Command cmd) {
@@ -74,7 +73,7 @@ public class Executor {
             @Override
             public void run() {
                 if (!gameEnd) {
-                    viewer.showMessage("You lose, time is off");
+                    viewer.showWarning("You lose, time is off");
                 }
                 timeIsOff();
             }
@@ -109,12 +108,13 @@ public class Executor {
                 notLose = Tags.True;
             }
 
-            if (notLose == Tags.Exit)
+            if (notLose == Tags.Exit || notLose == Tags.Restart || notLose == Tags.Menu)
                 return notLose;
         }
 
         timer.schedule(task, time);
         viewer.startGame();
+        long startTime = System.currentTimeMillis();
 
         while (notLose == Tags.True && !field.isWin()) {
             viewer.getUpdate(field.getUserView(), time);
@@ -130,21 +130,23 @@ public class Executor {
                     e.printStackTrace();
                 }
             }
+            waitCmd.kill();
 
             try {
                 notLose = cmd.run();
             } catch (IOException e) {
-                viewer.showMessage("incorrect point");
+                viewer.showWarning("incorrect point");
             }
         }
 
         gameEnd = true;
 
         if (field.isWin()) {
-            viewer.showMessage("You win!");
+            viewer.getUpdate(field.getBombMap(), time);
+            viewer.showWarning("You win!");
             try {
                 readScores();
-                writeScores(time);
+                writeScores(System.currentTimeMillis() - startTime);
             } catch (IOException e) {
                 //
             }
@@ -155,7 +157,7 @@ public class Executor {
 
         } else {
             viewer.getUpdate(field.getLoseMap(), time);
-            viewer.showMessage("You lose");
+            viewer.showWarning("You lose");
             return Tags.Menu;
         }
     }
@@ -199,14 +201,16 @@ public class Executor {
 
         viewer.askUser("Who are you?");
         var name = controller.waitAnswer();
-        scores.put((int)time / 1000, name);
+        scores.put((int)time, name);
 
-        int j = 1;
+        int j = 0;
         for (var i : scores.entrySet()) {
-            if (j >= 5) break;
+            if (j > 5) break;
             fileWriter.write(i.getKey() + " " + i.getValue() + "\n");
             j++;
         }
+
+        fileWriter.close();
     }
 
     private void timeIsOff() {

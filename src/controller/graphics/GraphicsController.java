@@ -47,6 +47,11 @@ public class GraphicsController extends AbstractController {
 
     @Override
     public String waitAnswer() {
+        try {
+            return viewer.waitAction();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 }

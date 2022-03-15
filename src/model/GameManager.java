@@ -64,7 +64,15 @@ public class GameManager {
                     //TODO format
                     StringBuilder message = new StringBuilder();
                     for (var i : (ArrayList<?>)cmd.getArg()) {
-                        message.append((String) i);
+                        var arr = i.toString().split(" ");
+                        for (var j : arr) {
+                            if (isNumber(j)) {
+                                long num = Integer.parseInt(j);
+                                message.append(String.format("%tM:%tS ", num, num));
+                            } else {
+                                message.append(j);
+                            }
+                        }
                         message.append("\n");
                     }
                     viewer.showMessage(message.toString());
@@ -85,5 +93,15 @@ public class GameManager {
         }
 
         return tag;
+    }
+
+
+    boolean isNumber(String str) {
+        try {
+            Integer.parseInt(str);
+        } catch (NumberFormatException e) {
+            return false;
+        }
+        return true;
     }
 }

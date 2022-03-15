@@ -1,8 +1,7 @@
-package model.data;
+package model;
 
 import controller.Controller;
 import controller.commands.Command;
-import model.Executor;
 import view.Viewer;
 
 import java.io.IOException;
@@ -10,6 +9,7 @@ import java.io.IOException;
 public class CmdThread extends Thread {
     private final Controller controller;
     private final Viewer viewer;
+    private boolean flag;
     public Command cmd;
     Executor executor;
 
@@ -27,7 +27,7 @@ public class CmdThread extends Thread {
 
     private  void waitCmd() {
         cmd = null;
-        while (cmd == null) {
+        while (cmd == null && !flag) {
             try {
                 cmd = controller.waitCommand();
             } catch (IOException e) {
@@ -35,5 +35,9 @@ public class CmdThread extends Thread {
             }
         }
         executor.setCmd(cmd);
+    }
+
+    public void kill() {
+        flag = true;
     }
 }

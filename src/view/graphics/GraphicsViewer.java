@@ -8,22 +8,27 @@ import java.util.HashMap;
 
 public class GraphicsViewer implements Viewer {
     private String action;
-    private static long startTime;
-    private boolean flag;
+    private boolean alreadyCreated;
 
     private final JFrame main;
+
     private final JPanel greetScreen;
     private final JPanel levels;
+    private FieldPanel fieldPanel;
     private Field field;
+
     private final HashMap<String, FieldButton> buttons;
+    private TimeThread timeThread;
 
     public GraphicsViewer() {
         main = new JFrame("Minesweeper");
         buttons = new HashMap<>();
-        flag = false;
+        alreadyCreated = false;
         main.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        main.setSize(new Dimension(700,700));
-        main.setLocation(100, 100);
+        main.setLayout(new BorderLayout());
+
+        main.setSize(new Dimension(300,300));
+        Location.centreWindow(main);
 
         greetScreen = new GreetScreen(this);
         levels = new Levels(this);
@@ -31,16 +36,14 @@ public class GraphicsViewer implements Viewer {
 
     @Override
     public String waitAction() {
-        while (true) {
+        do {
             try {
-                Thread.sleep(100);
+                Thread.sleep(10);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            if (action != null) {
-                break;
-            }
-        }
+        } while (action == null);
+
         var tmp = action;
         action = null;
         return tmp;
@@ -48,63 +51,94 @@ public class GraphicsViewer implements Viewer {
 
     @Override
     public void startGame() {
-        startTime = System.currentTimeMillis();
+        timeThread.start();
     }
 
     @Override
-    public void setFlag(boolean flag) {
-        this.flag = flag;
+    public void setAlreadyCreated(boolean alreadyCreated) {
+        this.alreadyCreated = alreadyCreated;
     }
 
     @Override
     public void getUpdate(Character[][] userView, long time) {
-        if (!flag) {
+        if (!alreadyCreated) {
             levels.setVisible(false);
-            field = new Field(userView, this);
-            showPanel(field);
-            //showTime(time);
-            flag = true;
+            fieldPanel = new FieldPanel(userView, this);
+            field = fieldPanel.getField();
+
+            showPanel(fieldPanel);
+            timeThread = new TimeThread(time, fieldPanel.getTimePanel().getTimeLabel());
+
+            alreadyCreated = true;
         } else {
             field.updateMap(userView);
         }
     }
 
     @Override
-    public void showMessage(String message) {
-        JDialog dialog = new JDialog();
+    public void showWarning(String message) {
+        if (timeThread != null) {
+            timeThread.kill();
+        }
 
-        //dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-        /*button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dialog.setVisible(false);
-            }
-        });*/
-        //var list = message.split("\n");
-        //var text = new JList<>(list);
+        JDialog dialog = new JDialog();
         JOptionPane.showMessageDialog(dialog, message, "message", JOptionPane.PLAIN_MESSAGE);
     }
 
     @Override
-    public void askUser(String message) {
+    public void showMessage(String message) {
+        JButton button = new JButton("back");
+        JPanel panel = new JPanel();
+        button.addActionListener(e -> {
+            panel.setVisible(false);
+            main.setVisible(true);
+            showPanel(greetScreen);
+        });
 
+        var list = message.split("\n");
+        var label = new JList<>(list);
+        panel.add(label);
+        label.setVisible(true);
+        panel.add(label, BorderLayout.CENTER);
+
+        panel.add(button);
+        showPanel(panel);
+        timeThread.kill();
+    }
+
+    @Override
+    public void askUser(String message) {
+        JDialog dialog = new JDialog();
+        action = JOptionPane.showInputDialog(dialog, message, "message", JOptionPane.PLAIN_MESSAGE);
     }
 
     @Override
     public void showGreetScreen() {
+        main.setSize(new Dimension(300,300));
+
+        if (timeThread != null) {
+            timeThread.kill();
+        }
+
+        if (field != null) {
+            field.setVisible(false);
+        }
         showPanel(greetScreen);
     }
 
     @Override
     public void showLevelChoosing() {
+        main.setSize(new Dimension(300,300));
+
+        if (timeThread != null) {
+            timeThread.kill();
+        }
+
+        if (field != null) {
+            field.setVisible(false);
+        }
         greetScreen.setVisible(false);
         showPanel(levels);
-    }
-
-    @Override
-    public void showTime(long time) {
-        Thread sub = new TimeThread(time);
-        sub.start();
     }
 
     public HashMap<String, FieldButton> getButtons() {
@@ -123,5 +157,10 @@ public class GraphicsViewer implements Viewer {
 
     public JFrame getMain() {
         return main;
+    }
+
+    public void setMenuBar(JMenuBar menuBar) {
+        main.setJMenuBar(menuBar);
+        menuBar.setVisible(true);
     }
 }
