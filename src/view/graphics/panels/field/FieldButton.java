@@ -1,15 +1,20 @@
-package view.graphics;
+package view.graphics.panels.field;
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionListener;
+import java.util.HashMap;
 
 public class FieldButton extends JButton {
     private final String pos;
     private boolean flag;
 
-    public FieldButton(String text) {
-        super();
+    public FieldButton(int size, ActionListener listener, int i, int j) {
+        this.setPreferredSize(new Dimension(size,size));
+        this.addActionListener(listener);
+
         this.setFocusPainted(false);
-        this.pos = text;
+        this.pos = i + " " + j;
         this.flag = false;
     }
 
@@ -33,8 +38,12 @@ public class FieldButton extends JButton {
                 this.setText("");
             }
             case 'x' -> this.setIcon(null);
-            case 'f', 'b' -> {
+            case 'f' -> {
                 Icon img = new ImageIcon("flag1.png");
+                this.setIcon(img);
+            }
+            case 'b' -> {
+                Icon img = new ImageIcon("bomb.png");
                 this.setIcon(img);
             }
             default -> {

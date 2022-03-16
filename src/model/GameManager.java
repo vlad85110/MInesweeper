@@ -13,7 +13,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 public class GameManager {
-    public void start() {
+    private Viewer viewer;
+    private Controller controller;
+    private Executor executor;
+
+    public GameManager() {
         ViewFactory viewFactory;
         ControllerFactory controllerFactory;
         try {
@@ -24,8 +28,6 @@ public class GameManager {
             return;
         }
 
-        Viewer viewer = null;
-        Controller controller = null;
         try {
             viewer = viewFactory.createObject(null);
             controller = controllerFactory.createObject(new ControllerDescriptor(viewer));
@@ -36,7 +38,10 @@ public class GameManager {
 
         assert viewer != null;
         assert controller != null;
+        executor = new Executor(controller, viewer);
+    }
 
+    public Tags start() {
         viewer.showGreetScreen();
 
         Command cmd;
@@ -59,7 +64,15 @@ public class GameManager {
                     //TODO format
                     StringBuilder message = new StringBuilder();
                     for (var i : (ArrayList<?>)cmd.getArg()) {
-                        message.append((String) i);
+                        var arr = i.toString().split(" ");
+                        for (var j : arr) {
+                            if (isNumber(j)) {
+                                long num = Integer.parseInt(j);
+                                message.append(String.format("%tM:%tS ", num, num));
+                            } else {
+                                message.append(j);
+                            }
+                        }
                         message.append("\n");
                     }
                     viewer.showMessage(message.toString());
@@ -74,7 +87,21 @@ public class GameManager {
             System.exit(0);
         }
 
-        Executor executor = new Executor(controller, viewer);
-        executor.run();
+        Tags tag = null;
+        while (tag != Tags.Exit && tag != Tags.Menu) {
+            tag = executor.run();
+        }
+
+        return tag;
+    }
+
+
+    boolean isNumber(String str) {
+        try {
+            Integer.parseInt(str);
+        } catch (NumberFormatException e) {
+            return false;
+        }
+        return true;
     }
 }

@@ -7,13 +7,15 @@ public interface Viewer {
 
     void showMessage(String message);
 
+    void showWarning(String message);
+
     void askUser(String message);
 
     void showGreetScreen();
 
     void showLevelChoosing();
 
-    void showTime(long time);
-
     String waitAction() throws InterruptedException;
+
+    void setAlreadyCreated(boolean alreadyCreated);
 }

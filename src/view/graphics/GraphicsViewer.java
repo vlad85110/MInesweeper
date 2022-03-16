@@ -1,46 +1,55 @@
 package view.graphics;
 
-import model.data.Commands;
 import view.Viewer;
+import view.graphics.panels.field.FieldButton;
+import view.graphics.panels.field.FieldPanel;
+import view.graphics.panels.GreetScreen;
+import view.graphics.panels.Levels;
+import view.graphics.panels.field.time.Field;
+import view.graphics.panels.field.time.TimeThread;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.util.HashMap;
 
 public class GraphicsViewer implements Viewer {
     private String action;
-    private static long startTime;
-    private boolean flag;
+    private boolean alreadyCreated;
 
-    private final JFrame frame;
-    private JPanel greetScreen;
-    private JPanel levels;
-    private JPanel field;
+    private final JFrame main;
+
+    private final JPanel greetScreen;
+    private final JPanel levels;
+    private FieldPanel fieldPanel;
+    private Field field;
+
     private final HashMap<String, FieldButton> buttons;
+    private TimeThread timeThread;
 
     public GraphicsViewer() {
-        frame = new JFrame("Minesweeper");
+        main = new JFrame("Minesweeper");
         buttons = new HashMap<>();
-        flag = false;
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.setSize(new Dimension(700,700));
-        createGreetScreen();
-        createLevels();
+        alreadyCreated = false;
+        main.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        main.setLayout(new BorderLayout());
+
+        main.setSize(new Dimension(300,300));
+        Location.centreWindow(main);
+
+        greetScreen = new GreetScreen(this);
+        levels = new Levels(this);
     }
 
     @Override
     public String waitAction() {
-        while (true) {
+        do {
             try {
-                Thread.sleep(100);
+                Thread.sleep(10);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            if (action != null) {
-                break;
-            }
-        }
+        } while (action == null);
+
         var tmp = action;
         action = null;
         return tmp;
@@ -48,158 +57,116 @@ public class GraphicsViewer implements Viewer {
 
     @Override
     public void startGame() {
-        startTime = System.currentTimeMillis();
+        timeThread.start();
+    }
+
+    @Override
+    public void setAlreadyCreated(boolean alreadyCreated) {
+        this.alreadyCreated = alreadyCreated;
     }
 
     @Override
     public void getUpdate(Character[][] userView, long time) {
-        if (!flag) {
+        if (!alreadyCreated) {
             levels.setVisible(false);
-            createField(userView);
-            showPanel(field);
-            showTime(time);
-            flag = true;
+            fieldPanel = new FieldPanel(userView, this);
+            field = fieldPanel.getField();
+
+            showPanel(fieldPanel);
+            timeThread = new TimeThread(time, fieldPanel.getTimePanel().getTimeLabel());
+
+            alreadyCreated = true;
         } else {
-            for (int i = 0; i < userView.length; i++) {
-                for (int j = 0; j < userView.length; j++) {
-                    buttons.get(j + " " + i).update(userView[j][i]);
-                }
-            }
+            field.updateMap(userView);
         }
     }
 
     @Override
+    public void showWarning(String message) {
+        if (timeThread != null) {
+            timeThread.kill();
+        }
+
+        JDialog dialog = new JDialog();
+        JOptionPane.showMessageDialog(dialog, message, "message", JOptionPane.PLAIN_MESSAGE);
+    }
+
+    @Override
     public void showMessage(String message) {
-        JFrame frame = new JFrame("");
+        JButton button = new JButton("back");
+        JPanel panel = new JPanel();
+        button.addActionListener(e -> {
+            panel.setVisible(false);
+            main.setVisible(true);
+            showPanel(greetScreen);
+        });
+
         var list = message.split("\n");
-        var text = new JList<>(list);
+        var label = new JList<>(list);
+        panel.add(label);
+        label.setVisible(true);
+        panel.add(label, BorderLayout.CENTER);
 
-        text.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        frame.add(text);
-        frame.setSize(new Dimension(200,200));
-        frame.setVisible(true);
+        panel.add(button);
+        showPanel(panel);
+        timeThread.kill();
     }
 
     @Override
     public void askUser(String message) {
-
+        JDialog dialog = new JDialog();
+        action = JOptionPane.showInputDialog(dialog, message, "message", JOptionPane.PLAIN_MESSAGE);
     }
 
     @Override
     public void showGreetScreen() {
-        //field.setVisible(false);
+        main.setSize(new Dimension(300,300));
+
+        if (timeThread != null) {
+            timeThread.kill();
+        }
+
+        if (field != null) {
+            fieldPanel.setVisible(false);
+        }
         showPanel(greetScreen);
     }
 
     @Override
     public void showLevelChoosing() {
+        main.setSize(new Dimension(300,300));
+
+        if (timeThread != null) {
+            timeThread.kill();
+        }
+
+        if (field != null) {
+            field.setVisible(false);
+        }
         greetScreen.setVisible(false);
         showPanel(levels);
     }
 
-    @Override
-    public void showTime(long time) {
-        Thread sub = new TimeThread(time);
-        sub.start();
-    }
-
-    private void createGreetScreen() {
-        greetScreen = new JPanel();
-        greetScreen.add(createMenuButton("New game"));
-        greetScreen.add(createMenuButton("High scores"));
-        greetScreen.add(createMenuButton("About"));
-        greetScreen.add(createMenuButton("Exit"));
-        greetScreen.setLayout(new BoxLayout(greetScreen, BoxLayout.Y_AXIS));
-    }
-
-    private void createLevels() {
-        levels = new JPanel();
-        levels.add(createMenuButton("Beginner"));
-        levels.add(createMenuButton("Intermediate"));
-        levels.add(createMenuButton("Expert"));
-        levels.setLayout(new BoxLayout(levels, BoxLayout.Y_AXIS));
-    }
-
-    private void createField(Character[][] userView) {
-        field = new JPanel();
-        var listener = new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e) {
-               action = "open " + e.getActionCommand();
-            }
-        };
-        var mListener = new MouseListener() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (SwingUtilities.isRightMouseButton(e)) {
-                    var button = (FieldButton)e.getComponent();
-                    if (button.isFlag()) {
-                        action = "remove " + button.getPos();
-                    } else {
-                        action = "set " + button.getPos();
-                        button.setFlag(true);
-                    }
-                }
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
-            }
-        };
-
-        for (int i = 0; i < userView.length; i++) {
-            for (int j = 0; j < userView.length; j++) {
-                var button = createFieldButton(frame.getHeight()/userView.length - 10, listener, i, j);
-                field.add(button);
-                button.setVisible(true);
-                button.addMouseListener(mListener);
-            }
-        }
-    }
-
-    private JButton createMenuButton(String caption) {
-        var button = new JButton(caption);
-        button.setAlignmentX(Component.CENTER_ALIGNMENT);
-        button.setActionCommand(Commands.commands.get(caption));
-        var listener = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                action = e.getActionCommand();
-            }
-        };
-        button.addActionListener(listener);
-        return button;
-    }
-
-    private FieldButton createFieldButton(int size, ActionListener listener, Integer i, Integer j) {
-        var button = new FieldButton(i.toString() + " " + j.toString());
-        button.setPreferredSize(new Dimension(size,size));
-        button.setActionCommand(button.getPos());
-        button.addActionListener(listener);
-        buttons.put(button.getPos(), button);
-        return button;
+    public HashMap<String, FieldButton> getButtons() {
+        return buttons;
     }
 
     private void showPanel(JPanel panel) {
-        frame.setContentPane(panel);
+        main.setContentPane(panel);
         panel.setVisible(true);
-        frame.setVisible(true);
+        main.setVisible(true);
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+    public JFrame getMain() {
+        return main;
+    }
+
+    public void setMenuBar(JMenuBar menuBar) {
+        main.setJMenuBar(menuBar);
+        menuBar.setVisible(true);
     }
 }
