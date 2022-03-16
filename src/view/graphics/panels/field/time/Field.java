@@ -1,13 +1,18 @@
-package view.graphics;
+package view.graphics.panels.field.time;
+
+import view.graphics.*;
+import view.graphics.listeners.GameListener;
+import view.graphics.listeners.GameMouseListener;
+import view.graphics.listeners.MenuListener;
+import view.graphics.panels.field.FieldButton;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class Field extends JPanel {
-    public static final int BUTTON_SIZE = 50;//67
+    public static final int BUTTON_SIZE = 35;//67
 
     private final GraphicsViewer viewer;
-    private final JMenuBar menuBar;
 
     public Field(Character[][] userView, GraphicsViewer viewer) {
         Location.centreWindow(this);
@@ -17,24 +22,8 @@ public class Field extends JPanel {
         GameListener listener = new GameListener(viewer);
         GameMouseListener mListener = new GameMouseListener(viewer);
 
-        menuBar = new JMenuBar();
-        var menu = new JMenu("menu");
-        var restart = new JMenuItem("restart");
-        var exit = new JMenuItem("exit");
-
-        restart.setActionCommand(getName());
-        restart.addActionListener(new MenuListener(viewer));
-
-        exit.setActionCommand(getName());
-        exit.addActionListener(new MenuListener(viewer));
-
-        menu.add(restart);
-        menu.add(exit);
-        menuBar.add(menu);
-        viewer.setMenuBar(menuBar);
-
         var frameSize = BUTTON_SIZE * userView.length;
-        viewer.getMain().setSize(frameSize,  frameSize + 30);
+        viewer.getMain().setSize(frameSize,  frameSize + 90);
         GridLayout layout = new GridLayout(userView.length, userView.length);
         this.setLayout(layout);
 
@@ -57,11 +46,5 @@ public class Field extends JPanel {
                 viewer.getButtons().get(j + " " + i).update(userView[j][i]);
             }
         }
-    }
-
-    @Override
-    public void setVisible(boolean aFlag) {
-        super.setVisible(aFlag);
-        menuBar.setVisible(aFlag);
     }
 }

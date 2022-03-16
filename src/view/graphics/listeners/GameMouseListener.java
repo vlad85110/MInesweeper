@@ -1,4 +1,7 @@
-package view.graphics;
+package view.graphics.listeners;
+
+import view.graphics.panels.field.FieldButton;
+import view.graphics.GraphicsViewer;
 
 import javax.swing.*;
 import java.awt.event.MouseEvent;

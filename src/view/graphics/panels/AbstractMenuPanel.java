@@ -1,4 +1,7 @@
-package view.graphics;
+package view.graphics.panels;
+
+import view.graphics.GraphicsViewer;
+import view.graphics.listeners.MenuListener;
 
 import javax.swing.*;
 

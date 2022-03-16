@@ -1,4 +1,4 @@
-package view.graphics;
+package view.graphics.panels.field;
 
 import javax.swing.*;
 import java.awt.*;

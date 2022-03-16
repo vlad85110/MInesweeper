@@ -1,4 +1,6 @@
-package view.graphics;
+package view.graphics.panels;
+
+import view.graphics.GraphicsViewer;
 
 import javax.swing.*;
 

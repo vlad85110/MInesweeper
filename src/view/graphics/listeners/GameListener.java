@@ -1,4 +1,6 @@
-package view.graphics;
+package view.graphics.listeners;
+
+import view.graphics.GraphicsViewer;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

@@ -1,6 +1,12 @@
 package view.graphics;
 
 import view.Viewer;
+import view.graphics.panels.field.FieldButton;
+import view.graphics.panels.field.FieldPanel;
+import view.graphics.panels.GreetScreen;
+import view.graphics.panels.Levels;
+import view.graphics.panels.field.time.Field;
+import view.graphics.panels.field.time.TimeThread;
 
 import javax.swing.*;
 import java.awt.*;
@@ -121,7 +127,7 @@ public class GraphicsViewer implements Viewer {
         }
 
         if (field != null) {
-            field.setVisible(false);
+            fieldPanel.setVisible(false);
         }
         showPanel(greetScreen);
     }

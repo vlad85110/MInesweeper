@@ -1,4 +1,4 @@
-package view.graphics;
+package view.graphics.panels;
 
 import model.data.Commands;
 
