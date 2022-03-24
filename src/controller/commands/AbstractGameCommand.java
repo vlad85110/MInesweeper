@@ -2,6 +2,7 @@ package controller.commands;
 
 import controller.commands.Command;
 import controller.commands.descriptors.CommandDescriptor;
+import exeptions.MakeCommandException;
 import model.data.Field;
 import model.data.Point;
 
@@ -12,13 +13,13 @@ public abstract class AbstractGameCommand implements Command {
     protected Field field;
 
 
-    protected AbstractGameCommand(CommandDescriptor descriptor) throws IOException {
+    protected AbstractGameCommand(CommandDescriptor descriptor) throws MakeCommandException {
         this.field = descriptor.field;
 
         try {
             point = new Point(Integer.parseInt(descriptor.args[1]), Integer.parseInt(descriptor.args[2]));
         } catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {
-            throw new IOException("custom");
+            throw new MakeCommandException(e);
         }
     }
 

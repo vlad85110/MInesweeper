@@ -2,7 +2,6 @@ package view.graphics.panels.field;
 
 import view.graphics.Location;
 import view.graphics.listeners.MenuListener;
-import view.graphics.panels.field.time.Field;
 import view.graphics.GraphicsViewer;
 import view.graphics.panels.field.time.TimePanel;
 

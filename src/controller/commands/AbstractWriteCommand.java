@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 public abstract class AbstractWriteCommand implements Command {
     private final ArrayList<String> output;
+    protected String arg;
     public AbstractWriteCommand (CommandDescriptor descriptor) {
         output = new ArrayList<>();
     }
@@ -34,8 +35,16 @@ public abstract class AbstractWriteCommand implements Command {
 
     @Override
     public Object getArg() {
+        return arg;
+    }
+
+    public ArrayList<String> getOutput() {
         return output;
     }
 
     protected abstract String getFileName();
+
+    public void setArg(String arg) {
+        this.arg = arg;
+    }
 }

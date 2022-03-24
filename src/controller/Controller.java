@@ -1,16 +1,19 @@
 package controller;
 
 import controller.commands.Command;
+import exeptions.MakeCommandException;
 import model.data.Field;
 
 import java.io.IOException;
 
 public interface Controller {
-    public void setField(Field field);
+    void setField(Field field);
 
-    public String waitLevel();
+    String waitLevel();
 
-    public Command waitCommand() throws IOException;
+    Command waitCommand() throws MakeCommandException;
 
-    public String waitAnswer();
+    String waitAnswer();
+
+    void interrupt();
 }

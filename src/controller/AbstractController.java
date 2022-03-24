@@ -2,6 +2,7 @@ package controller;
 
 import controller.commands.Command;
 import controller.commands.descriptors.CommandDescriptor;
+import exeptions.MakeCommandException;
 import factory.CommandFactory;
 import model.data.Field;
 
@@ -17,7 +18,7 @@ public abstract class AbstractController implements Controller {
         this.field = field;
     }
 
-    protected Command makeCommand(String cmdStr) throws IOException {
+    protected Command makeCommand(String cmdStr) throws MakeCommandException {
         var args = cmdStr.split( " ");
 
         Command command;
@@ -25,7 +26,7 @@ public abstract class AbstractController implements Controller {
             command = factory.createObject(new CommandDescriptor(args, field));
         } catch (ClassNotFoundException | InvocationTargetException |
                 IllegalAccessException | NoSuchMethodException | InstantiationException e) {
-            throw new IOException("custom");
+            throw new MakeCommandException(e);
         }
 
         assert command != null;

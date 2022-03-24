@@ -22,16 +22,15 @@ public class TimeThread extends Thread {
         long prevTime = startTime;
         long tm = 1;
 
-
         flag = false;
-        while (tm != 0 && !flag) {
+        do {
             if (((System.currentTimeMillis() - prevTime)) / 1000 >= 1) {
                 prevTime = System.currentTimeMillis();
                 tm = ((time + startTime) - System.currentTimeMillis());
                 output = String.format("%tM:%tS", tm, tm);
                 label.setText(output);
             }
-        }
+        } while (tm != 0 && !flag);
     }
 
     public void kill() {

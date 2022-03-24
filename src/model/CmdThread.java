@@ -2,9 +2,8 @@ package model;
 
 import controller.Controller;
 import controller.commands.Command;
+import exeptions.MakeCommandException;
 import view.Viewer;
-
-import java.io.IOException;
 
 public class CmdThread extends Thread {
     private final Controller controller;
@@ -20,18 +19,18 @@ public class CmdThread extends Thread {
     }
 
     @Override
-    public  void run() {
+    public void run() {
         super.run();
         waitCmd();
     }
 
-    private  void waitCmd() {
+    private void waitCmd() {
         cmd = null;
         while (cmd == null && !flag) {
             try {
                 cmd = controller.waitCommand();
-            } catch (IOException e) {
-                viewer.showMessage("wrong input, return");
+            } catch (MakeCommandException e) {
+                viewer.showList("wrong input, return");
             }
         }
         executor.setCmd(cmd);
@@ -39,5 +38,6 @@ public class CmdThread extends Thread {
 
     public void kill() {
         flag = true;
+        controller.interrupt();
     }
 }

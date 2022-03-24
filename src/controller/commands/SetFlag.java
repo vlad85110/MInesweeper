@@ -1,11 +1,12 @@
 package controller.commands;
 
 import controller.commands.descriptors.CommandDescriptor;
+import exeptions.MakeCommandException;
 
 import java.io.IOException;
 
 public class SetFlag extends AbstractGameCommand {
-    public SetFlag(CommandDescriptor descriptor) throws IOException {
+    public SetFlag(CommandDescriptor descriptor) throws MakeCommandException {
         super(descriptor);
     }
 

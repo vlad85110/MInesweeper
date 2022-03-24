@@ -1,11 +1,12 @@
 package controller.commands;
 
 import controller.commands.descriptors.CommandDescriptor;
+import exeptions.MakeCommandException;
 
 import java.io.IOException;
 
 public class RemoveFlag extends AbstractGameCommand {
-    public RemoveFlag(CommandDescriptor descriptor) throws IOException {
+    public RemoveFlag(CommandDescriptor descriptor) throws MakeCommandException {
         super(descriptor);
     }
 

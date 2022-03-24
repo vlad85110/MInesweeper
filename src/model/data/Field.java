@@ -1,11 +1,11 @@
 package model.data;
 
-import java.io.IOException;
-
 public class Field {
     private final int size;
     private final int bombs;
     private boolean start;
+    private boolean lose;
+    private final boolean win;
     private int opened;
     private final Character [][] bombMap;
     private final Character [][] userView;
@@ -20,6 +20,8 @@ public class Field {
         openCells = new boolean[size][size];
 
         start = false;
+        lose = false;
+        win = false;
         opened = 0;
 
         for (int i = 0; i < size; i++){
@@ -31,27 +33,23 @@ public class Field {
         }
     }
 
-    public void setBomb(Point point) {
-        bombMap[point.x][point.y] = 'b';
-    }
+    public Character[][] getView() {
+        if (win) {
+            return bombMap;
 
-    public void setNum(Point point) {
-        try {
-            if (bombMap[point.x][point.y] != 'b')
-                bombMap[point.x][point.y]++;
-        } catch (ArrayIndexOutOfBoundsException e) {}
-    }
+        } else if (lose) {
+            for (int i = 0; i < size; i++) {
+                for (int j = 0; j < size; j++) {
+                    if (bombMap[i][j] == 'b') {
+                        userView[i][j] = 'b';
+                    }
+                }
+            }
+            return userView;
 
-    public void setStart() {
-        start = true;
-    }
-
-    public void setFlag(Point point) {
-        userView[point.x][point.y] = 'f';
-    }
-
-    public void removeFlag(Point point) {
-        userView[point.x][point.y] = 'x';
+        } else {
+            return userView;
+        }
     }
 
     public void openSell(Point point) {
@@ -61,22 +59,25 @@ public class Field {
                 openCells[point.x][point.y] = true;
                 opened++;
             }
-        } catch (ArrayIndexOutOfBoundsException e) {}
-    }
-
-    public Character[][] getLoseMap() {
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                if (bombMap[i][j] == 'b') {
-                    userView[i][j] = 'b';
-                }
-            }
+        } catch (ArrayIndexOutOfBoundsException e) {
+            //
         }
-        return userView;
     }
 
-    public Character[][] getUserView() {
-        return userView;
+    public void setStart() {
+        start = true;
+    }
+
+    public void setLose() {
+        lose = true;
+    }
+
+    public void setFlag(Point point) {
+        userView[point.x][point.y] = 'f';
+    }
+
+    public void removeFlag(Point point) {
+        userView[point.x][point.y] = 'x';
     }
 
     public boolean isMine(Point point) {
@@ -123,7 +124,16 @@ public class Field {
         return opened == (size * size - bombs);
     }
 
-    public Character[][] getBombMap() {
-        return bombMap;
+    public void setBomb(Point point) {
+        bombMap[point.x][point.y] = 'b';
+    }
+
+    public void setNum(Point point) {
+        try {
+            if (bombMap[point.x][point.y] != 'b')
+                bombMap[point.x][point.y]++;
+        } catch (ArrayIndexOutOfBoundsException e) {
+            //
+        }
     }
 }
