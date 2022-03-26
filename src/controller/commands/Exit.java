@@ -1,9 +1,6 @@
 package controller.commands;
 
-import controller.commands.Command;
 import controller.commands.descriptors.CommandDescriptor;
-
-import java.io.IOException;
 
 public class Exit implements Command {
     public Exit(CommandDescriptor descriptor) {

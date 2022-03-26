@@ -1,22 +1,21 @@
 package view.graphics.panels.field;
 
-import view.graphics.Location;
+import model.data.UpdateData;
 import view.graphics.listeners.MenuListener;
 import view.graphics.GraphicsViewer;
-import view.graphics.panels.field.time.TimePanel;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class FieldPanel extends JPanel {
     private final Field field;
-    private final TimePanel timePanel;
-    private final JMenuBar menuBar;
+    private final TextPanel textPanel;
+    private final GraphicsViewer viewer;
 
-    public FieldPanel(Character[][] userView, GraphicsViewer viewer) {
-        Location.centreWindow(this);
+    public FieldPanel(UpdateData data, GraphicsViewer viewer) {
+        this.viewer = viewer;
 
-        menuBar = new JMenuBar();
+        JMenuBar menuBar = new JMenuBar();
         var options = new JMenu("options");
         var restart = new JMenuItem("restart");
         var exit = new JMenuItem("exit");
@@ -38,19 +37,16 @@ public class FieldPanel extends JPanel {
         menuBar.add(options);
         viewer.setMenuBar(menuBar);
 
-        timePanel = new TimePanel();
-        field = new Field(userView, viewer);
+        textPanel = new TextPanel();
+        textPanel.getFlagLabel().setText("flags" + data.flags().toString());
+        field = new Field(data.view(), viewer);
 
-        this.add(timePanel, BorderLayout.LINE_START);
+        this.add(textPanel, BorderLayout.LINE_START);
         this.add(field,BorderLayout.CENTER);
     }
 
-    public void setTime (String time) {
-        timePanel.setText(time);
-    }
-
-    public TimePanel getTimePanel() {
-        return timePanel;
+    public TextPanel getTextPanel() {
+        return textPanel;
     }
 
     public Field getField() {
@@ -60,6 +56,13 @@ public class FieldPanel extends JPanel {
     @Override
     public void setVisible(boolean aFlag) {
         super.setVisible(aFlag);
-        menuBar.setVisible(aFlag);
+        if (!aFlag) {
+            viewer.setMenuBar(null);
+        }
+    }
+
+    public void updateMap(UpdateData data) {
+        field.updateMap(data.view());
+        textPanel.getFlagLabel().setText("flags" + data.flags().toString());
     }
 }

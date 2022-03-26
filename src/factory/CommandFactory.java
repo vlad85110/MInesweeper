@@ -2,7 +2,6 @@ package factory;
 
 import controller.commands.Command;
 import controller.commands.descriptors.CommandDescriptor;
-import model.data.Field;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -30,5 +29,4 @@ public class CommandFactory extends Factory {
 
         return object;
     }
-
 }

@@ -3,13 +3,14 @@ package controller.commands;
 import controller.commands.descriptors.CommandDescriptor;
 import exeptions.MakeCommandException;
 import exeptions.RunCommandException;
+import model.data.Field;
 import model.data.Point;
 
 import java.io.IOException;
 
-public class Surrender extends AbstractGameCommand {
+public class Surrender implements Command{
+    private final Field field;
     public Surrender(CommandDescriptor descriptor) throws MakeCommandException {
-        super(descriptor);
         this.field = descriptor.field;
     }
 

@@ -1,11 +1,13 @@
 package view;
 
+import model.data.UpdateData;
+
 public interface Viewer {
     void startGame();
 
     void endGame();
 
-    void getUpdate(Character[][] userView, long time);
+    void getUpdate(UpdateData data, long time);
 
     void showList(String message);
 

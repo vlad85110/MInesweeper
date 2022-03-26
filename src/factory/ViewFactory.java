@@ -1,12 +1,9 @@
 package factory;
 
-import controller.commands.Command;
-import model.data.Field;
 import view.Viewer;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Locale;
 
 public class ViewFactory extends Factory {
     public ViewFactory() throws IOException, NullPointerException {

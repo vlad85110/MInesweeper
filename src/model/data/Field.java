@@ -7,6 +7,7 @@ public class Field {
     private boolean lose;
     private final boolean win;
     private int opened;
+    private int flags;
     private final Character [][] bombMap;
     private final Character [][] userView;
     private final boolean [][] openCells;
@@ -14,6 +15,7 @@ public class Field {
     public Field(GameDescriptor descriptor) {
         size = descriptor.size();
         bombs = descriptor.bombs();
+        flags = bombs;
 
         bombMap = new Character[size][size];
         userView = new Character[size][size];
@@ -33,9 +35,9 @@ public class Field {
         }
     }
 
-    public Character[][] getView() {
+    public UpdateData getView() {
         if (win) {
-            return bombMap;
+            return new UpdateData(bombMap, flags);
 
         } else if (lose) {
             for (int i = 0; i < size; i++) {
@@ -45,16 +47,17 @@ public class Field {
                     }
                 }
             }
-            return userView;
+            return new UpdateData(userView, flags);
 
         } else {
-            return userView;
+            return new UpdateData(userView, flags);
         }
     }
 
     public void openSell(Point point) {
         try {
             if (!openCells[point.x][point.y]) {
+                if (userView[point.x][point.y] == 'f') flags++;
                 userView[point.x][point.y] = bombMap[point.x][point.y];
                 openCells[point.x][point.y] = true;
                 opened++;
@@ -73,11 +76,14 @@ public class Field {
     }
 
     public void setFlag(Point point) {
+        if (flags == 0) return;
         userView[point.x][point.y] = 'f';
+        flags--;
     }
 
     public void removeFlag(Point point) {
         userView[point.x][point.y] = 'x';
+        flags++;
     }
 
     public boolean isMine(Point point) {

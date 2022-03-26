@@ -1,7 +1,6 @@
 package model.data;
 
 import java.util.HashMap;
-import java.util.Map;
 
 public class Commands {
     public static HashMap<String, String> commands = new HashMap<>() {

@@ -1,5 +1,6 @@
 package view.graphics;
 
+import model.data.UpdateData;
 import view.Viewer;
 import view.graphics.panels.ScoreList;
 import view.graphics.panels.field.FieldPanel;
@@ -21,7 +22,6 @@ public class GraphicsViewer implements Viewer {
     private final JPanel greetScreen;
     private final JPanel levels;
     private FieldPanel fieldPanel;
-    private Field field;
 
     private TimeThread timeThread;
 
@@ -74,18 +74,18 @@ public class GraphicsViewer implements Viewer {
     }
 
     @Override
-    public void getUpdate(Character[][] userView, long time) {
+    public void getUpdate(UpdateData data, long time) {
         if (!alreadyCreated) {
             levels.setVisible(false);
-            fieldPanel = new FieldPanel(userView, this);
-            field = fieldPanel.getField();
+            fieldPanel = new FieldPanel(data, this);
 
             showPanel(fieldPanel);
-            timeThread = new TimeThread(time, fieldPanel.getTimePanel().getTimeLabel());
+            Location.centreWindow(main);
+            timeThread = new TimeThread(time, fieldPanel.getTextPanel().getTimeLabel());
 
             alreadyCreated = true;
         } else {
-            field.updateMap(userView);
+            fieldPanel.updateMap(data);
         }
     }
 
@@ -128,7 +128,7 @@ public class GraphicsViewer implements Viewer {
 
     @Override
     public void showGreetScreen() {
-        if (field != null) {
+        if (fieldPanel != null) {
             fieldPanel.setVisible(false);
         }
         showPanel(greetScreen);
@@ -136,7 +136,7 @@ public class GraphicsViewer implements Viewer {
 
     @Override
     public void showLevelChoosing() {
-        if (field != null) {
+        if (fieldPanel != null) {
             fieldPanel.setVisible(false);
         }
         showPanel(levels);

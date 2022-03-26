@@ -1,5 +1,6 @@
 package view.console;
 
+import model.data.UpdateData;
 import view.Viewer;
 
 public class ConsoleViewer implements Viewer {
@@ -25,9 +26,9 @@ public class ConsoleViewer implements Viewer {
     }
     
     @Override
-    public void getUpdate(Character[][] userView, long time) {
+    public void getUpdate(UpdateData data, long time) {
         showTime((time + startTime) - System.currentTimeMillis());
-        printMap(userView, userView.length);
+        printMap(data.view(), data.view().length);
     }
 
     @Override
