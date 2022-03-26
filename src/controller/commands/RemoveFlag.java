@@ -15,7 +15,9 @@ public class RemoveFlag extends AbstractGameCommand {
         if (field.outOf(point)) {
             throw new IOException();
         }
-        field.removeFlag(point);
+        if (field.isFlag(point)) {
+            field.removeFlag(point);
+        }
         return Tags.True;
     }
 }

@@ -94,6 +94,14 @@ public class Field {
        }
     }
 
+    public boolean isFlag(Point point) {
+        try {
+            return userView[point.x][point.y] == 'f';
+        } catch (ArrayIndexOutOfBoundsException e) {
+            return false;
+        }
+    }
+
     public boolean isEmpty(Point point) {
         try {
             return bombMap[point.x][point.y] == '0';
