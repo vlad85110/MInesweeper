@@ -1,10 +1,7 @@
 package model;
 
 import controller.Controller;
-import controller.commands.Command;
-import controller.commands.Open;
-import controller.commands.Surrender;
-import controller.commands.Tags;
+import controller.commands.*;
 import controller.commands.descriptors.CommandDescriptor;
 import exeptions.MakeCommandException;
 import exeptions.RunCommandException;
@@ -116,9 +113,10 @@ public class Executor {
         viewer.startGame();
         long startTime = System.currentTimeMillis();
 
-        while (tag == Tags.True && !field.isWin()) {
+        while (!field.isWin() && !field.isLose() && !(tag == Tags.Exit || tag == Tags.Restart || tag == Tags.Menu)) {
             viewer.getUpdate(field.getView(), time);
             tag = runCommand();
+            //TODO tags
         }
 
         timer.cancel();
@@ -197,6 +195,7 @@ public class Executor {
                 viewer.showList("wrong input, return");
                 e.printStackTrace();
             }
+            if (cmd instanceof Tip) cmd = null;
         }
 
         try {

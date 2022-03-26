@@ -17,9 +17,11 @@ public class FieldPanel extends JPanel {
 
         JMenuBar menuBar = new JMenuBar();
         var options = new JMenu("options");
+        var help = new JMenu("help");
         var restart = new JMenuItem("restart");
         var exit = new JMenuItem("exit");
         var main = new JMenuItem("menu");
+        var tip = new JMenuItem("tip");
 
         restart.setActionCommand(getName());
         restart.addActionListener(new MenuListener(viewer));
@@ -30,11 +32,17 @@ public class FieldPanel extends JPanel {
         main.setActionCommand(getName());
         main.addActionListener(new MenuListener(viewer));
 
+        tip.setActionCommand(getName());
+        tip.addActionListener(new MenuListener(viewer));
+
         options.add(restart);
         options.add(main);
         options.add(exit);
 
+        help.add(tip);
+
         menuBar.add(options);
+        menuBar.add(help);
         viewer.setMenuBar(menuBar);
 
         textPanel = new TextPanel();

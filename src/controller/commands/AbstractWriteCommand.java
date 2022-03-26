@@ -1,6 +1,7 @@
 package controller.commands;
 
 import controller.commands.descriptors.CommandDescriptor;
+import exeptions.RunCommandException;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -16,7 +17,7 @@ public abstract class AbstractWriteCommand implements Command {
     }
 
     @Override
-    public Tags run() throws IOException {
+    public Tags run() throws RunCommandException, IOException {
         File file = new File(getFileName());
         FileReader fileReader = new FileReader(file);
         BufferedReader reader = new BufferedReader(fileReader);

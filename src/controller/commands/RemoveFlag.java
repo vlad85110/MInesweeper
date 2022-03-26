@@ -2,6 +2,7 @@ package controller.commands;
 
 import controller.commands.descriptors.CommandDescriptor;
 import exeptions.MakeCommandException;
+import exeptions.RunCommandException;
 
 import java.io.IOException;
 
@@ -11,9 +12,9 @@ public class RemoveFlag extends AbstractGameCommand {
     }
 
     @Override
-    public Tags run() throws IOException {
+    public Tags run() throws RunCommandException {
         if (field.outOf(point)) {
-            throw new IOException();
+            throw new RunCommandException();
         }
         if (field.isFlag(point)) {
             field.removeFlag(point);

@@ -11,6 +11,8 @@ import view.graphics.panels.field.time.TimeThread;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 public class GraphicsViewer implements Viewer {
     private String action;
@@ -81,6 +83,7 @@ public class GraphicsViewer implements Viewer {
 
             showPanel(fieldPanel);
             Location.centreWindow(main);
+
             timeThread = new TimeThread(time, fieldPanel.getTextPanel().getTimeLabel());
 
             alreadyCreated = true;

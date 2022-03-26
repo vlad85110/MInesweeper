@@ -2,8 +2,7 @@ package controller.commands;
 
 import controller.commands.descriptors.CommandDescriptor;
 import exeptions.MakeCommandException;
-
-import java.io.IOException;
+import exeptions.RunCommandException;
 
 public class SetFlag extends AbstractGameCommand {
     public SetFlag(CommandDescriptor descriptor) throws MakeCommandException {
@@ -11,9 +10,9 @@ public class SetFlag extends AbstractGameCommand {
     }
 
     @Override
-    public Tags run() throws IOException {
+    public Tags run() throws RunCommandException {
         if (field.outOf(point)) {
-            throw new IOException();
+            throw new RunCommandException();
         }
         field.setFlag(point);
         return Tags.True;

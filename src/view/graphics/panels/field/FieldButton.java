@@ -45,6 +45,7 @@ public class FieldButton extends JButton {
                 Icon img = new ImageIcon("icn/bomb.png");
                 this.setIcon(img);
             }
+
             default -> {
                 this.setEnabled(false);
                 this.setIcon(null);

@@ -1,12 +1,9 @@
 package controller.commands;
 
-import controller.commands.Command;
 import controller.commands.descriptors.CommandDescriptor;
 import exeptions.MakeCommandException;
 import model.data.Field;
 import model.data.Point;
-
-import java.io.IOException;
 
 public abstract class AbstractGameCommand implements Command {
     protected Point point;

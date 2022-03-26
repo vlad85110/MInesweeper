@@ -5,7 +5,6 @@ public class Field {
     private final int bombs;
     private boolean start;
     private boolean lose;
-    private final boolean win;
     private int opened;
     private int flags;
     private final Character [][] bombMap;
@@ -23,7 +22,6 @@ public class Field {
 
         start = false;
         lose = false;
-        win = false;
         opened = 0;
 
         for (int i = 0; i < size; i++){
@@ -36,7 +34,7 @@ public class Field {
     }
 
     public UpdateData getView() {
-        if (win) {
+        if (isWin()) {
             return new UpdateData(bombMap, flags);
 
         } else if (lose) {
@@ -76,12 +74,16 @@ public class Field {
     }
 
     public void setFlag(Point point) {
+        if (userView[point.x][point.y] != 'x') return;
+
         if (flags == 0) return;
         userView[point.x][point.y] = 'f';
         flags--;
     }
 
     public void removeFlag(Point point) {
+        if (userView[point.x][point.y] != 'f') return;
+
         userView[point.x][point.y] = 'x';
         flags++;
     }
@@ -119,7 +121,7 @@ public class Field {
     }
 
     public boolean outOf(Point point) {
-        return point.x >= size || point.y >= size;
+        return point.x >= size || point.y >= size || point.x < 0 || point.y < 0;
     }
 
     public boolean isOpen(Point point) {
@@ -136,6 +138,10 @@ public class Field {
 
     public boolean isWin() {
         return opened == (size * size - bombs);
+    }
+
+    public boolean isLose() {
+        return lose;
     }
 
     public void setBomb(Point point) {
