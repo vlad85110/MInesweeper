@@ -9,6 +9,6 @@ public class About extends AbstractWriteCommand {
 
     @Override
     protected String getFileName() {
-        return "about.txt";
+        return "data/about.txt";
     }
 }

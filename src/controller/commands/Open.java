@@ -1,6 +1,7 @@
 package controller.commands;
 
 import controller.commands.descriptors.CommandDescriptor;
+import exeptions.MakeCommandException;
 import model.data.Point;
 
 import java.io.IOException;
@@ -8,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Open extends AbstractGameCommand {
-    public Open(CommandDescriptor descriptor) throws IOException {
+    public Open(CommandDescriptor descriptor) throws MakeCommandException {
         super(descriptor);
     }
 
@@ -29,7 +30,10 @@ public class Open extends AbstractGameCommand {
 
     @Override
     public Tags run() throws IOException {
-        if (field.isMine(point)) return Tags.False;
+        if (field.isMine(point)) {
+            field.setLose();
+            return Tags.False;
+        }
 
         openMain(point);
         return Tags.True;
@@ -39,6 +43,7 @@ public class Open extends AbstractGameCommand {
         if (field.outOf(point)) {
             throw new IOException();
         }
+
         if (field.isNearMine(point)) {
             field.openSell(point);
             return;

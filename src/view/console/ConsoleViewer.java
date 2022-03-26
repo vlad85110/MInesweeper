@@ -11,6 +11,11 @@ public class ConsoleViewer implements Viewer {
     }
 
     @Override
+    public void endGame() {
+
+    }
+
+    @Override
     public void showGreetScreen() {
         System.out.println("Minesweeper");
         System.out.println("1.New Game");
@@ -26,18 +31,23 @@ public class ConsoleViewer implements Viewer {
     }
 
     @Override
-    public void showMessage(String message) {
+    public void showList(String message) {
+        System.out.println(message);
+    }
+
+    @Override
+    public void showText(String message) {
         System.out.println(message);
     }
 
     @Override
     public void showWarning(String message) {
-        showMessage(message);
+        showList(message);
     }
 
     @Override
     public void askUser(String message) {
-        showMessage(message);
+        showList(message);
     }
 
     public static void printMap(Object[][] field, int size) {

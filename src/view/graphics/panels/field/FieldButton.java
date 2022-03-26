@@ -3,7 +3,6 @@ package view.graphics.panels.field;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.util.HashMap;
 
 public class FieldButton extends JButton {
     private final String pos;
@@ -39,11 +38,11 @@ public class FieldButton extends JButton {
             }
             case 'x' -> this.setIcon(null);
             case 'f' -> {
-                Icon img = new ImageIcon("flag1.png");
+                Icon img = new ImageIcon("icn/flag1.png");
                 this.setIcon(img);
             }
             case 'b' -> {
-                Icon img = new ImageIcon("bomb.png");
+                Icon img = new ImageIcon("icn/bomb.png");
                 this.setIcon(img);
             }
             default -> {

@@ -1,20 +1,20 @@
 package view.graphics;
 
 import view.Viewer;
-import view.graphics.panels.field.FieldButton;
+import view.graphics.panels.ScoreList;
 import view.graphics.panels.field.FieldPanel;
-import view.graphics.panels.GreetScreen;
 import view.graphics.panels.Levels;
-import view.graphics.panels.field.time.Field;
+import view.graphics.panels.GreetScreen;
+import view.graphics.panels.field.Field;
 import view.graphics.panels.field.time.TimeThread;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.HashMap;
 
 public class GraphicsViewer implements Viewer {
     private String action;
     private boolean alreadyCreated;
+    private boolean interruptFlag;
 
     private final JFrame main;
 
@@ -23,13 +23,12 @@ public class GraphicsViewer implements Viewer {
     private FieldPanel fieldPanel;
     private Field field;
 
-    private final HashMap<String, FieldButton> buttons;
     private TimeThread timeThread;
 
     public GraphicsViewer() {
         main = new JFrame("Minesweeper");
-        buttons = new HashMap<>();
         alreadyCreated = false;
+        interruptFlag = false;
         main.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         main.setLayout(new BorderLayout());
 
@@ -42,13 +41,14 @@ public class GraphicsViewer implements Viewer {
 
     @Override
     public String waitAction() {
+        interruptFlag = false;
         do {
             try {
                 Thread.sleep(10);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        } while (action == null);
+        } while (action == null && !interruptFlag);
 
         var tmp = action;
         action = null;
@@ -61,8 +61,16 @@ public class GraphicsViewer implements Viewer {
     }
 
     @Override
+    public void endGame() {
+        if (timeThread != null) {
+            timeThread.kill();
+        }
+    }
+
+    @Override
     public void setAlreadyCreated(boolean alreadyCreated) {
         this.alreadyCreated = alreadyCreated;
+
     }
 
     @Override
@@ -83,16 +91,18 @@ public class GraphicsViewer implements Viewer {
 
     @Override
     public void showWarning(String message) {
-        if (timeThread != null) {
-            timeThread.kill();
-        }
-
         JDialog dialog = new JDialog();
         JOptionPane.showMessageDialog(dialog, message, "message", JOptionPane.PLAIN_MESSAGE);
     }
 
     @Override
-    public void showMessage(String message) {
+    public void showList(String message) {
+        ScoreList panel = new ScoreList(message, this);
+        showPanel(panel);
+    }
+
+    @Override
+    public void showText(String message) {
         JButton button = new JButton("back");
         JPanel panel = new JPanel();
         button.addActionListener(e -> {
@@ -101,15 +111,13 @@ public class GraphicsViewer implements Viewer {
             showPanel(greetScreen);
         });
 
-        var list = message.split("\n");
-        var label = new JList<>(list);
-        panel.add(label);
-        label.setVisible(true);
+        var label = new JLabel();
+        label.setText(message);
         panel.add(label, BorderLayout.CENTER);
+        label.setVisible(true);
 
         panel.add(button);
         showPanel(panel);
-        timeThread.kill();
     }
 
     @Override
@@ -120,12 +128,6 @@ public class GraphicsViewer implements Viewer {
 
     @Override
     public void showGreetScreen() {
-        main.setSize(new Dimension(300,300));
-
-        if (timeThread != null) {
-            timeThread.kill();
-        }
-
         if (field != null) {
             fieldPanel.setVisible(false);
         }
@@ -134,21 +136,10 @@ public class GraphicsViewer implements Viewer {
 
     @Override
     public void showLevelChoosing() {
-        main.setSize(new Dimension(300,300));
-
-        if (timeThread != null) {
-            timeThread.kill();
-        }
-
         if (field != null) {
-            field.setVisible(false);
+            fieldPanel.setVisible(false);
         }
-        greetScreen.setVisible(false);
         showPanel(levels);
-    }
-
-    public HashMap<String, FieldButton> getButtons() {
-        return buttons;
     }
 
     private void showPanel(JPanel panel) {
@@ -161,12 +152,15 @@ public class GraphicsViewer implements Viewer {
         this.action = action;
     }
 
-    public JFrame getMain() {
-        return main;
+    public void setInterruptFlag(boolean interruptFlag) {
+        this.interruptFlag = interruptFlag;
+    }
+
+    public void setSize(Dimension size) {
+        main.setSize(size);
     }
 
     public void setMenuBar(JMenuBar menuBar) {
         main.setJMenuBar(menuBar);
-        menuBar.setVisible(true);
     }
 }

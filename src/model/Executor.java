@@ -1,11 +1,13 @@
 package model;
 
-import controller.*;
+import controller.Controller;
 import controller.commands.Command;
-import controller.commands.Menu;
 import controller.commands.Open;
+import controller.commands.Surrender;
 import controller.commands.Tags;
 import controller.commands.descriptors.CommandDescriptor;
+import exeptions.MakeCommandException;
+import exeptions.RunCommandException;
 import model.data.Field;
 import model.data.GameDescriptor;
 import model.data.Point;
@@ -24,77 +26,64 @@ public class Executor {
     private Command cmd;
     private boolean gameEnd;
     private MapCreator creator;
+    private String level;
 
     public Executor(Controller controller, Viewer viewer) {
         this.controller = controller;
         this.viewer = viewer;
     }
 
-    private void createField() {
+    private int createField() {
         viewer.showLevelChoosing();
 
-        String level = null;
+        level = null;
         while (level == null) {
             try {
                 level = controller.waitLevel();
             } catch (NullPointerException e) {
-                viewer.showMessage("wrong input. return");
+                viewer.showWarning("Command is null");
+
             }
         }
 
         GameDescriptor descriptor;
         try {
-            descriptor = makeDescriptor(level);
+            descriptor = makeDescriptor();
         } catch (IOException e) {
-            viewer.showMessage("can't rum game");
-            return;
+            viewer.showWarning("Can't create field");
+            return -1;
         }
 
         field = new Field(descriptor);
         creator = new MapCreator(descriptor, field);
         controller.setField(field);
-        viewer.setAlreadyCreated(false);
-    }
-
-    public void setCmd(Command cmd) {
-        if (this.cmd == null)
-            this.cmd = cmd;
+        return 0;
     }
 
     public Tags run() {
         gameEnd = false;
-        Tags notLose = Tags.False;
-        cmd = null;
+        Tags tag = Tags.False;
+        viewer.setAlreadyCreated(false);
 
-        createField();
+        if (createField() == -1) return Tags.Menu;
 
-        Timer timer = new Timer();
-        TimerTask task = new TimerTask() {
-            @Override
-            public void run() {
-                if (!gameEnd) {
-                    viewer.showWarning("You lose, time is off");
-                }
-                timeIsOff();
-            }
-        };
-
-        while (!field.isStart()) {
-            viewer.getUpdate(field.getUserView(), time);
+            while (!field.isStart()) {
+            viewer.getUpdate(field.getView(), time);
 
             cmd = null;
             while (cmd == null) {
                 try {
                     cmd = controller.waitCommand();
-                } catch (IOException e) {
-                    viewer.showMessage("wrong input, return");
+                } catch (MakeCommandException e) {
+                    viewer.showWarning("wrong input, return");
+                    e.printStackTrace();
                 }
 
                 if (cmd instanceof Open) {
                     try {
                         creator.initField((Point) cmd.getArg());
                     } catch (IOException e) {
-                        viewer.showMessage(e.getMessage());
+                        viewer.showList(e.getMessage());
                         cmd = null;
                     }
                     field.setStart();
@@ -102,47 +91,42 @@ public class Executor {
             }
 
             try {
-                notLose = cmd.run();
-            } catch (IOException e) {
-                viewer.showMessage("incorrect point");
-                notLose = Tags.True;
+                tag = cmd.run();
+            } catch (RunCommandException | IOException e) {
+                viewer.showWarning("incorrect point");
+                tag = Tags.True;
             }
 
-            if (notLose == Tags.Exit || notLose == Tags.Restart || notLose == Tags.Menu)
-                return notLose;
+            if (tag == Tags.Exit || tag == Tags.Restart || tag == Tags.Menu)
+                return tag;
         }
+
+        Timer timer = new Timer();
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                if (!gameEnd) {
+                    viewer.getUpdate(field.getView(), time);
+                }
+                timeIsOff();
+            }
+        };
 
         timer.schedule(task, time);
         viewer.startGame();
         long startTime = System.currentTimeMillis();
 
-        while (notLose == Tags.True && !field.isWin()) {
-            viewer.getUpdate(field.getUserView(), time);
-
-            var waitCmd = new CmdThread(controller, viewer, this);
-            waitCmd.start();
-
-            cmd = null;
-            while (cmd == null) {
-                try {
-                    Thread.sleep(1);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            waitCmd.kill();
-
-            try {
-                notLose = cmd.run();
-            } catch (IOException e) {
-                viewer.showWarning("incorrect point");
-            }
+        while (tag == Tags.True && !field.isWin()) {
+            viewer.getUpdate(field.getView(), time);
+            tag = runCommand();
         }
 
+        timer.cancel();
+        viewer.endGame();
         gameEnd = true;
 
         if (field.isWin()) {
-            viewer.getUpdate(field.getBombMap(), time);
+            viewer.getUpdate(field.getView(), time);
             viewer.showWarning("You win!");
             try {
                 readScores();
@@ -150,21 +134,84 @@ public class Executor {
             } catch (IOException e) {
                 //
             }
-            return Tags.Menu;
+            while (tag == Tags.True || tag == Tags.False) {
+                tag = waitExit();
+            }
+            return tag;
 
-        } else if (notLose == Tags.Exit || notLose == Tags.Restart || notLose == Tags.Menu) {
-            return notLose;
+        } else if (tag == Tags.Exit || tag == Tags.Restart || tag == Tags.Menu) {
+            return tag;
 
         } else {
-            viewer.getUpdate(field.getLoseMap(), time);
+            viewer.getUpdate(field.getView(), time);
             viewer.showWarning("You lose");
-            return Tags.Menu;
+            while (tag == Tags.True || tag == Tags.False) {
+                tag = waitExit();
+            }
+            return tag;
         }
     }
 
-    private GameDescriptor makeDescriptor(String level) throws IOException, NullPointerException {
+    private Tags runCommand() {
+        Tags tag = null;
+        CmdThread cmdThread = new CmdThread(controller, viewer, this);
+        cmdThread.start();
+
+        cmd = null;
+        while (cmd == null) {
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        cmdThread.kill();
+
+        try {
+            cmdThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            tag = cmd.run();
+        } catch (IOException | RunCommandException e) {
+            viewer.showWarning("incorrect point");
+        }
+        return tag;
+    }
+
+    public void setCmd(Command cmd) {
+        if (this.cmd == null)
+            this.cmd = cmd;
+    }
+
+    private Tags waitExit() {
+        Tags tag;
+        cmd = null;
+
+        while (cmd == null) {
+            try {
+                cmd = controller.waitCommand();
+            } catch (MakeCommandException e) {
+                viewer.showList("wrong input, return");
+                e.printStackTrace();
+            }
+        }
+
+        try {
+            tag = cmd.run();
+        } catch (RunCommandException | IOException e) {
+            viewer.showList("incorrect point");
+            tag = Tags.True;
+        }
+
+        return tag;
+    }
+
+    private GameDescriptor makeDescriptor() throws IOException {
         Properties properties = new Properties();
-        var reader = new FileReader(level + ".config");
+        var reader = new FileReader("cfg/" + level + ".config");
         properties.load(reader);
 
         int bombs = Integer.parseInt(properties.getProperty("bombs"));
@@ -177,7 +224,7 @@ public class Executor {
     }
 
     private void readScores() throws IOException {
-        File file = new File("High scores.txt");
+        File file = new File( "data/" + level + ".txt");
         FileReader fileReader = new FileReader(file);
         BufferedReader reader = new BufferedReader(fileReader);
         scores = new TreeMap<>();
@@ -196,7 +243,7 @@ public class Executor {
     }
 
     private void writeScores(long time) throws IOException {
-        File output = new File("High scores.txt");
+        File output = new File("data/" + level + ".txt");
         FileWriter fileWriter = new FileWriter(output);
 
         viewer.askUser("Who are you?");
@@ -205,7 +252,7 @@ public class Executor {
 
         int j = 0;
         for (var i : scores.entrySet()) {
-            if (j > 5) break;
+            if (j > 15) break;
             fileWriter.write(i.getKey() + " " + i.getValue() + "\n");
             j++;
         }
@@ -214,6 +261,10 @@ public class Executor {
     }
 
     private void timeIsOff() {
-        cmd = new Menu(new CommandDescriptor("Exit".split(" "), null));
+        try {
+            cmd = new Surrender(new CommandDescriptor("surrender".split(" "), field));
+        } catch (MakeCommandException e) {
+            e.printStackTrace();
+        }
     }
 }

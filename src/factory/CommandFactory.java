@@ -14,7 +14,7 @@ public class CommandFactory extends Factory {
 
     @Override
     protected String getFileName() {
-        return "commands.properties";
+        return "cfg/commands.properties";
     }
 
     @Override

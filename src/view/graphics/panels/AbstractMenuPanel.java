@@ -7,8 +7,8 @@ import javax.swing.*;
 
 public abstract class AbstractMenuPanel extends JPanel {
     private final GraphicsViewer viewer;
+
     protected AbstractMenuPanel(GraphicsViewer viewer) {
-        super();
         this.viewer = viewer;
     }
 

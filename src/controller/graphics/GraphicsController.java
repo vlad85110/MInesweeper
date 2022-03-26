@@ -2,17 +2,18 @@ package controller.graphics;
 
 import controller.AbstractController;
 import controller.commands.Command;
+import exeptions.MakeCommandException;
 import factory.CommandFactory;
 import model.data.ControllerDescriptor;
-import view.Viewer;
+import view.graphics.GraphicsViewer;
 
 import java.io.IOException;
 
 public class GraphicsController extends AbstractController {
-    private final Viewer viewer;
+    private final GraphicsViewer viewer;
 
     public GraphicsController(ControllerDescriptor desc) {
-        viewer = desc.viewer();
+        viewer = (GraphicsViewer) desc.viewer();
         field = null;
 
         try {
@@ -24,34 +25,27 @@ public class GraphicsController extends AbstractController {
 
     @Override
     public String waitLevel() {
-        try {
-            return viewer.waitAction().toLowerCase();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            return null;
-        }
+        return viewer.waitAction().toLowerCase();
     }
 
     @Override
-    public Command waitCommand() throws IOException {
-        String cmdStr = null;
-        try {
-            cmdStr = viewer.waitAction();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    public Command waitCommand() throws MakeCommandException {
+        String cmdStr;
+        cmdStr = viewer.waitAction();
 
-        assert cmdStr != null;
+        if (cmdStr == null) {
+            return null;
+        }
         return makeCommand(cmdStr);
     }
 
     @Override
     public String waitAnswer() {
-        try {
-            return viewer.waitAction();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return viewer.waitAction();
+    }
+
+    @Override
+    public void interrupt() {
+        viewer.setInterruptFlag(true);
     }
 }

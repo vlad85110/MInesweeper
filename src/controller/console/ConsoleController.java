@@ -3,6 +3,7 @@ package controller.console;
 import controller.AbstractController;
 import controller.commands.Command;
 import controller.commands.descriptors.CommandDescriptor;
+import exeptions.MakeCommandException;
 import factory.CommandFactory;
 import model.data.ControllerDescriptor;
 
@@ -35,8 +36,13 @@ public class ConsoleController extends AbstractController {
     }
 
     @Override
-    public String waitLevel() throws NullPointerException {
+    public String waitLevel() {
         return difficulties.get(scanner.nextLine().trim()).toLowerCase();
+    }
+
+    @Override
+    public void interrupt() {
+
     }
 
     @Override
@@ -45,7 +51,7 @@ public class ConsoleController extends AbstractController {
     }
 
     @Override
-    public Command waitCommand() throws IOException {
+    public Command waitCommand() throws MakeCommandException {
         var cmdStr = scanner.nextLine().trim();
         return makeCommand(cmdStr);
     }

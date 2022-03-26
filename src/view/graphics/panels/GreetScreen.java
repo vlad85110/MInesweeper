@@ -1,10 +1,9 @@
 package view.graphics.panels;
 
 import view.graphics.GraphicsViewer;
-
 import javax.swing.*;
 
-public class GreetScreen extends AbstractMenuPanel {
+public class GreetScreen extends AbstractMenuPanel{
     public GreetScreen(GraphicsViewer viewer) {
         super(viewer);
         this.addButton("New game");
@@ -13,5 +12,4 @@ public class GreetScreen extends AbstractMenuPanel {
         this.addButton("Exit");
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
     }
-
 }

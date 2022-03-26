@@ -3,9 +3,13 @@ package view;
 public interface Viewer {
     void startGame();
 
+    void endGame();
+
     void getUpdate(Character[][] userView, long time);
 
-    void showMessage(String message);
+    void showList(String message);
+
+    void showText(String message);
 
     void showWarning(String message);
 

@@ -1,8 +1,9 @@
 package model;
 
 import controller.Controller;
-import controller.commands.Command;
-import controller.commands.Tags;
+import controller.commands.*;
+import exeptions.MakeCommandException;
+import exeptions.RunCommandException;
 import factory.ControllerFactory;
 import factory.ViewFactory;
 import model.data.ControllerDescriptor;
@@ -48,38 +49,32 @@ public class GameManager {
         Tags res = Tags.False;
 
         while (res == Tags.False) {
-            //TODO filenames in config
             cmd = null;
             while (cmd == null) {
                 try {
                     cmd = controller.waitCommand();
-                } catch (IOException e) {
-                    viewer.showMessage("wrong input, return");
+                } catch (MakeCommandException e) {
+                    viewer.showList("wrong input, return");
+                    e.printStackTrace();
                 }
+            }
+
+            if (cmd instanceof HighScores) {
+                viewer.showLevelChoosing();
+                var level = controller.waitLevel();
+                ((HighScores) cmd).setArg(level);
             }
 
             try {
                 res = cmd.run();
                 if (res == Tags.Write) {
-                    //TODO format
-                    StringBuilder message = new StringBuilder();
-                    for (var i : (ArrayList<?>)cmd.getArg()) {
-                        var arr = i.toString().split(" ");
-                        for (var j : arr) {
-                            if (isNumber(j)) {
-                                long num = Integer.parseInt(j);
-                                message.append(String.format("%tM:%tS ", num, num));
-                            } else {
-                                message.append(j);
-                            }
-                        }
-                        message.append("\n");
-                    }
-                    viewer.showMessage(message.toString());
+                    assert cmd instanceof AbstractWriteCommand;
+                    write((AbstractWriteCommand) cmd);
                     res = Tags.False;
                 }
-            } catch (IOException e) {
-                viewer.showMessage("Can't run command");
+            } catch (IOException | RunCommandException e) {
+                viewer.showList("Can't run command");
+                e.printStackTrace();
             }
         }
 
@@ -103,5 +98,29 @@ public class GameManager {
             return false;
         }
         return true;
+    }
+
+    void write(AbstractWriteCommand command) {
+        StringBuilder message = new StringBuilder();
+        for (var i : (ArrayList<?>)command.getOutput()) {
+            var arr = i.toString().split(" ");
+            for (var j : arr) {
+                if (isNumber(j)) {
+                    long num = Integer.parseInt(j);
+                    message.append(String.format("%tM:%tS ", num, num));
+                } else {
+                    message.append(j);
+                }
+            }
+            message.append("\n");
+        }
+
+        if (command instanceof HighScores) {
+            viewer.showList(message.toString());
+        }
+
+        if (command instanceof About) {
+            viewer.showText(message.toString());
+        }
     }
 }

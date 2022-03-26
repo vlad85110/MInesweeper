@@ -36,6 +36,6 @@ public class ControllerFactory extends Factory {
 
     @Override
     protected String getFileName() {
-        return "settings.config";
+        return "cfg/settings.config";
     }
 }
