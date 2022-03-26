@@ -1,10 +1,6 @@
 package controller.commands;
 
-import controller.commands.Command;
 import controller.commands.descriptors.CommandDescriptor;
-import model.data.GameDescriptor;
-
-import java.io.IOException;
 
 public class NewGame implements Command {
     public NewGame(CommandDescriptor descriptor) {

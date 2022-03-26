@@ -59,6 +59,11 @@ public class Open extends AbstractGameCommand {
             openSide(point.plus(-1, 0), "left");
             openSide(point.plus(1, 0), "right");
             openSide(point.plus(0, 1), "down");
+
+            openSide(point.plus(1, 1), "downRight");
+            openSide(point.plus(-1, -1), "upLeft");
+            openSide(point.plus(1, -1), "upRight");
+            openSide(point.plus(-1, 1), "downLeft");
         }
     }
 

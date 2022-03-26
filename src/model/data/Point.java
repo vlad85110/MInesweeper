@@ -1,7 +1,5 @@
 package model.data;
 
-import java.util.Collections;
-
 import static java.lang.Integer.signum;
 import static java.lang.Math.abs;
 

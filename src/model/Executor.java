@@ -250,11 +250,8 @@ public class Executor {
         var name = controller.waitAnswer();
         scores.put((int)time, name);
 
-        int j = 0;
         for (var i : scores.entrySet()) {
-            if (j > 15) break;
             fileWriter.write(i.getKey() + " " + i.getValue() + "\n");
-            j++;
         }
 
         fileWriter.close();
