@@ -10,7 +10,7 @@ import java.awt.*;
 import java.util.HashMap;
 
 public class Field extends JPanel {
-    public static final int BUTTON_SIZE = 45;
+    public static final int BUTTON_SIZE = 35;
     private final HashMap<String, FieldButton> buttons;
 
     public Field(Character[][] userView, GraphicsViewer viewer) {

@@ -8,6 +8,7 @@ import model.data.Point;
 
 public class Tip implements Command {
     private final Field field;
+    int actO, actS;
 
     public Tip(CommandDescriptor descriptor) {
         this.field = descriptor.field;
@@ -17,22 +18,22 @@ public class Tip implements Command {
     public Tags run() throws RunCommandException {
        var view = field.getView().view();
        var size = view.length;
+       actO = 1; actS = 1;
 
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                if (isNum(view[i][j])) {
-                    var point = new Point(i, j);
-                    findBomb(view, point);
-                    findFree(view, point);
-                }
-            }
-        }
+
+       for (int i = 0; i < size; i++) {
+           for (int j = 0; j < size; j++) {
+               if (isNum(view[i][j])) {
+                   var point = new Point(i, j);
+                   findBomb(view, point);
+                   findFree(view, point);
+               }
+           }
+       }
         return Tags.True;
     }
 
     boolean isNum(Character sym) {
-        if (sym == 'b')
-            System.out.println(1);
         return sym != 'x' && sym != 'f' && sym != '0';
     }
 
@@ -54,8 +55,11 @@ public class Tip implements Command {
         }
         if (cnt == Integer.parseInt(field[x][y].toString())) {
             openNear(sell);
-            //System.out.println("all free near " + sell);
+            actO = 1;
+        } else {
+            actO = 0;
         }
+
     }
 
     private void findBomb(Character[][] field, Point sell) throws RunCommandException {
@@ -75,7 +79,9 @@ public class Tip implements Command {
         }
         if (cnt == Integer.parseInt(field[x][y].toString())) {
             setNear(sell);
-            //System.out.println("all bmb near " + sell);
+            actS = 1;
+        } else {
+            actS = 0;
         }
     }
 
