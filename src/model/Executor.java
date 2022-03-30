@@ -116,7 +116,6 @@ public class Executor {
         while (!field.isWin() && !field.isLose() && !(tag == Tags.Exit || tag == Tags.Restart || tag == Tags.Menu)) {
             viewer.getUpdate(field.getView(), time);
             tag = runCommand();
-            //TODO tags
         }
 
         timer.cancel();
